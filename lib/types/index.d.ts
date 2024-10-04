@@ -55,4 +55,18 @@ interface UserPlan {
   plans: Plan;
 }
 
-// Plan => UserPlan (userSchedules) => Schedule => ScheduleItem
+interface Template {
+  id: number;
+  books: string[];
+  chaptersCount: number;
+  planId: number;
+  showTime: boolean;
+  schedules: {
+    items: string[];
+    perDay: number;
+    listType: string;
+  };
+  created_at: Date;
+  updated_at: Date;
+  plans: Plan;
+}

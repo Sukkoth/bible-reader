@@ -73,7 +73,7 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply dark:bg-gray-900 bg-gray-50 text-foreground;
   }
   .center-all {
     @apply flex items-center justify-center;

@@ -108,7 +108,7 @@ export async function CREATE_PLAN(
     throw new Error(error.message || "Something went wrong");
   }
 
-  return data;
+  return data as Plan;
 }
 
 export type CreatePlanSchedule = {

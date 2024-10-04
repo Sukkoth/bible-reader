@@ -1,15 +1,16 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 function BackButton() {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <Button
       variant={"outline"}
       size={"icon"}
       className='size-10 shadow-none'
-      onClick={() => navigate(-1)}
+      onClick={() => router.back()}
     >
       <ChevronLeft />
     </Button>

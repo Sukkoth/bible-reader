@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -9,21 +11,25 @@ import { Input } from "@/components/ui/input";
 import {
   CreatePlanSchema,
   CreatePlanSchemaType,
-} from "@/schemas/createPlanSchema";
+} from "@/lib/schemas/createPlanSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import supabase from "@/supabase";
-import { BiLoader } from "react-icons/bi";
-import { useCreatePlan } from "@/react-query/mutations";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { Loader } from "lucide-react";
+import useFetch from "@/hooks/useFetch";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 function CreateYourOwnPlan() {
+  const router = useRouter();
   const [image, setImage] = useState("");
   const [uploading, setUploading] = useState(false); //for file
-  const handleCreatePlan = useCreatePlan();
+
+  const supabase = createClient();
   const {
     register,
     handleSubmit,
@@ -34,9 +40,23 @@ function CreateYourOwnPlan() {
     resolver: zodResolver(CreatePlanSchema),
   });
 
+  const handleCreatePlan = useFetch<{ plan: Plan }>("/api/plans", false);
+
   const onSubmit: SubmitHandler<CreatePlanSchemaType> = async (data) => {
-    handleCreatePlan.mutate(data);
+    await handleCreatePlan.fetchData({
+      body: JSON.stringify(data),
+      method: "post",
+    });
   };
+
+  useEffect(() => {
+    if (handleCreatePlan.data?.plan.id) {
+      console.log("redirect fore", handleCreatePlan.data?.plan.name);
+      router.push(`/schedule/${handleCreatePlan.data?.plan.id}`);
+    } else {
+      console.log("could not redirect", handleCreatePlan.data);
+    }
+  }, [handleCreatePlan.data, router]);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -62,14 +82,10 @@ function CreateYourOwnPlan() {
       clearErrors("coverImg");
       setValue(
         "coverImg",
-        `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${
-          data?.fullPath
-        }`
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data?.fullPath}`
       );
       setImage(
-        `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${
-          data?.fullPath
-        }`
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${data?.fullPath}`
       );
     }
     setUploading(false);
@@ -80,15 +96,17 @@ function CreateYourOwnPlan() {
       <CardHeader>
         <CardTitle className='text-3xl'>Create your own plan</CardTitle>
         <CardDescription>
-          You can create your own reading plan that suits your needs, Let's get
-          started! Make sure you make it nice, so that others can discover your
-          plan and use it too.
+          You can create your own reading plan that suits your needs, Let&apos;s
+          get started! Make sure you make it nice, so that others can discover
+          your plan and use it too.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p className='text-sm pb-1 text-red-400'>
-          {handleCreatePlan?.error?.message}
-        </p>
+        {handleCreatePlan.error && (
+          <p className='text-sm pb-1 text-red-400'>
+            {handleCreatePlan.error?.message}
+          </p>
+        )}
         <form
           className='flex items-center justify-center flex-col gap-5'
           onSubmit={handleSubmit(onSubmit)}
@@ -135,7 +153,7 @@ function CreateYourOwnPlan() {
                 <Label htmlFor='avatar'>Cover Image </Label>
                 {uploading && (
                   <span className='spin-loader'>
-                    <BiLoader />
+                    <Loader />
                   </span>
                 )}
               </div>
@@ -154,8 +172,13 @@ function CreateYourOwnPlan() {
             </div>
           }
           {image.length ? (
-            <div className='size-24 rounded-full border overflow-hidden'>
-              <img src={image} alt='' className='w-full h-full object-cover' />
+            <div className='size-24 rounded-full border overflow-hidden absolute'>
+              <Image
+                src={image}
+                alt='cover-img'
+                className='absolute object-cover'
+                fill
+              />
             </div>
           ) : (
             ""
@@ -165,7 +188,9 @@ function CreateYourOwnPlan() {
             type='submit'
             className='w-full'
             size='lg'
-            disabled={handleCreatePlan.isPending}
+            disabled={
+              handleCreatePlan.isPending || !!handleCreatePlan?.data?.plan?.id
+            }
           >
             {handleCreatePlan.isPending ? "Creating . . ." : "Create Plan"}
           </Button>
