@@ -1,0 +1,63 @@
+import Link from "next/link";
+import React from "react";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import LoginForm from "@/components/forms/LoginForm";
+import GoogleAuth from "@/components/GoogleAuth";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+
+async function Login() {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.getUser();
+  console.log("user is", data?.user);
+  console.log("error is", error?.message);
+  if (!error && data.user.id) {
+    console.log("redirecting");
+    return redirect("/home");
+  }
+
+  console.log("returning design");
+  return (
+    <div className='flex flex-col h-full flex-grow items-center justify-center'>
+      <Card className='mx-5 w-full bg-transparent'>
+        <CardHeader>
+          <CardTitle className='text-xl xxs:text-2xl xs:text-3xl'>
+            Login to your account
+          </CardTitle>
+          <CardDescription>
+            Enter your email to login to your account
+          </CardDescription>
+        </CardHeader>
+        <LoginForm />
+      </Card>
+      <Card className='mx-5 w-full mt-10 bg-transparent'>
+        <CardHeader>
+          <CardDescription className='text-center'>
+            ----------- OR CONTINUE WITH -----------
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className='space-y-5'>
+            <GoogleAuth />
+          </div>
+        </CardContent>
+      </Card>
+      <p className='pt-5 text-sm'>
+        Don&apos;t have an account?{" "}
+        <Link href='/register' className='text-primary underline'>
+          Register
+        </Link>
+      </p>
+    </div>
+  );
+}
+
+export default Login;
