@@ -24,7 +24,7 @@ function PlansItem({
   return (
     <Link
       href={to}
-      className='border my-3 border-border hover:bg-secondary cursor-pointer px-2 py-2 rounded-xl flex items-center'
+      className='border my-3 border-border hover:bg-secondary/50 cursor-pointer px-2 py-2 rounded-xl flex items-center'
     >
       <div className='w-16 me-5 flex justify-center'>
         <CalendarStatItem

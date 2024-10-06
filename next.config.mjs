@@ -2,7 +2,6 @@
 const nextConfig = {
   images: {
     // Allow images from the public directory
-    domains: ["localhost"], // Add your domain here if needed
     remotePatterns: [
       {
         protocol: "https",

@@ -21,8 +21,8 @@ function NewPlanItem({
 }: Props) {
   return (
     <Link
-      href={`/plans/create/schedule/${queryParam}`}
-      className='border my-3 border-stone-200 dark:border-stone-700 hover:bg-secondary cursor-pointer px-2 py-2 rounded-xl flex items-center'
+      href={`/schedule/${queryParam}`}
+      className='border my-3 border-stone-200 dark:border-stone-700 hover:bg-secondary/50 cursor-pointer px-2 py-2 rounded-xl flex items-center'
     >
       <div className='h-28 relative me-5 border w-28'>
         <Image
@@ -41,13 +41,13 @@ function NewPlanItem({
           <p className='text-xs pt-1 line-clamp-3'>{description}</p>
           <Separator className='my-3' />
           <div className='flex items-center justify-between'>
-            <div className='rounded-lg p-1 flex gap-2'>
-              <AlarmClock />
+            <div className='text-xs flex items-center gap-2'>
+              <AlarmClock className='size-5' />
               <p className='text-xs text-center'> {duration} days</p>
             </div>
             <Separator orientation='vertical' className='h-[1rem]' />
             <div className='text-xs flex items-center gap-2'>
-              <BookMarked />
+              <BookMarked className='size-5' />
               <p className='text-xs text-center'>
                 {" "}
                 {quantifier} session{parseInt(quantifier) > 1 ? "s" : ""}/day

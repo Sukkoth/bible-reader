@@ -60,12 +60,15 @@ function Drawer() {
           ))}
           <DrawerItem
             label='Switch Theme'
-            icon={<SunMoon />}
+            icon={<SunMoon className='size-4' />}
             onClick={() => handleSetTheme()}
           />
           <AlertDialog>
             <AlertDialogTrigger className='w-full'>
-              <DrawerItem icon={<LogOutIcon />} label='Logout' />
+              <DrawerItem
+                icon={<LogOutIcon className='size-5' />}
+                label='Logout'
+              />
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -97,17 +100,17 @@ function Drawer() {
 
 const drawerItems = [
   {
-    icon: <BookMarked />,
+    icon: <BookMarked className='size-5' />,
     label: "My Plans",
     to: "/plans",
   },
   {
-    icon: <User />,
+    icon: <User className='size-5' />,
     label: "Profile",
     to: "/profile",
   },
   {
-    icon: <Settings />,
+    icon: <Settings className='size-5' />,
     label: "Settings",
     to: "/settings",
   },

@@ -141,7 +141,7 @@ function CreatePlanSchedule() {
                 <div className='py-3 px-3 flex gap-2 text-lg hover:bg-secondary'>
                   <Checkbox
                     id={book.book}
-                    className='cursor-pointer'
+                    className='cursor-pointer border-white data-[state=checked]:bg-white'
                     defaultChecked={selectionRef.current.includes(book.book)}
                     onCheckedChange={(checked: boolean) =>
                       checked
