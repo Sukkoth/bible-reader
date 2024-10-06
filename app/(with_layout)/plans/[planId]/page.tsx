@@ -1,12 +1,10 @@
 import CalendarStatItem from "@/components/CalendarStatItem";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-
 import { Separator } from "@/components/ui/separator";
 import PlanDetailItem from "@/components/PlanDetailItem";
 import PlanCalendarView from "@/components/PlanCalendarView";
 import BackButton from "@/components/BackButton";
 import { format, isPast } from "date-fns";
-// import { useCallback } from "react";
 import React from "react";
 
 import {
@@ -34,9 +32,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 async function Plan({ params }: { params: { planId: string } }) {
-  //   const [, setRenderOnPlanItemUpdate] = useState(false);
-  //   const { planId } = useParams();
-
   const plan = (await GET_PLAN_SCHEDULE(parseInt(params.planId))) as UserPlan;
 
   if (!plan) {
@@ -61,32 +56,32 @@ async function Plan({ params }: { params: { planId: string } }) {
 
   const planDetail = [
     {
-      icon: <Send size={20} />,
+      icon: <Send className='size-5 sm:size-7 md:size-7' />,
       header: "Started",
       subText: format(plan.startDate, "MMM d,y"),
     },
     {
-      icon: <Hourglass size={20} />,
+      icon: <Hourglass className='size-5 sm:size-7 md:size-7' />,
       header: "Ends",
       subText: format(plan.endDate, "MMM d,y"),
     },
     {
-      icon: <BookOpenText size={20} />,
+      icon: <BookOpenText className='size-5 sm:size-7 md:size-7' />,
       header: "Per Session",
       subText: `${plan.perDay}`,
     },
     {
-      icon: <CalendarDays size={20} />,
+      icon: <CalendarDays className='size-5 sm:size-7 md:size-7' />,
       header: "Per Week",
       subText: `${plan.perDay * 7} Sessions `,
     },
     {
-      icon: <CheckCheck size={20} />,
+      icon: <CheckCheck className='size-5 sm:size-7 md:size-7' />,
       header: "Completed",
       subText: `${completedPercent}%`,
     },
     {
-      icon: <LayoutDashboard size={20} />,
+      icon: <LayoutDashboard className='size-5 sm:size-7 md:size-7' />,
       header: "Type",
       subText: "Bible Book",
     },

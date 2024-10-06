@@ -8,7 +8,7 @@ import Link from "next/link";
 
 async function Plans() {
   const { user } = await GET_USER();
-  const plans = await GET_PLANS(user.id);
+  const plans = await GET_PLANS(user!.id);
 
   return (
     <div>
