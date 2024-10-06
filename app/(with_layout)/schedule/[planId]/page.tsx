@@ -1,8 +1,8 @@
 "use client";
-import React from "react";
+import React, { ReactNode } from "react";
 import BackButton from "@/components/BackButton";
 import { Label } from "@/components/ui/label";
-import { books } from "@/lib/bible_books_list";
+import { books, categorizedBooks } from "@/lib/bible_books_list";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import PlanDetailItem from "@/components/PlanDetailItem";
@@ -31,6 +31,7 @@ import {
   Send,
   NotebookText,
   BookOpenText,
+  ChevronDown,
 } from "lucide-react";
 import type { CreatePlanSchedule } from "@/utils/supabase/services";
 import { GenerateScheduleDataForDb } from "@/utils/generateScheduleData";
@@ -131,32 +132,39 @@ function CreatePlanSchedule() {
           </p>
         )}
         {!showTime && (
-          <div className='pt-5 grid grid-cols-2'>
-            <h2 className='font-medium text-xl col-span-2'>Old Testament</h2>
-            {books.map((book, index) => (
-              <div key={book.book}>
-                {index === 39 && (
-                  <h2 className='font-medium text-xl py-2'>New Testament</h2>
+          <div className='pt-5'>
+            {Object.keys(categorizedBooks).map((category: string) => (
+              <Collapsible
+                title={category}
+                key={category}
+                checked={categorizedBooks[category].some((book) =>
+                  selectionRef.current.includes(book.book)
                 )}
-                <div className='py-3 px-3 flex gap-2 text-lg hover:bg-secondary'>
-                  <Checkbox
-                    id={book.book}
-                    className='cursor-pointer border-white data-[state=checked]:bg-white'
-                    defaultChecked={selectionRef.current.includes(book.book)}
-                    onCheckedChange={(checked: boolean) =>
-                      checked
-                        ? selectionRef.current.push(book.book)
-                        : selectionRef.current.splice(
-                            selectionRef.current.indexOf(book.book),
-                            1
-                          )
-                    }
-                  />
-                  <Label htmlFor={book.book} className='cursor-pointer'>
-                    {book.book}
-                  </Label>
-                </div>
-              </div>
+              >
+                {categorizedBooks[category].map((book) => (
+                  <div
+                    className='py-3 px-3 flex gap-2 text-lg hover:bg-secondary'
+                    key={book.book}
+                  >
+                    <Checkbox
+                      id={book.book}
+                      className='cursor-pointer border-gray-500 data-[state=checked]:bg-gray-500 dark:border-white dark:data-[state=checked]:bg-white'
+                      defaultChecked={selectionRef.current.includes(book.book)}
+                      onCheckedChange={(checked: boolean) =>
+                        checked
+                          ? selectionRef.current.push(book.book)
+                          : selectionRef.current.splice(
+                              selectionRef.current.indexOf(book.book),
+                              1
+                            )
+                      }
+                    />
+                    <Label htmlFor={book.book} className='cursor-pointer'>
+                      {book.book}
+                    </Label>
+                  </div>
+                ))}
+              </Collapsible>
             ))}
           </div>
         )}
@@ -337,3 +345,33 @@ function CreatePlanSchedule() {
 }
 
 export default CreatePlanSchedule;
+
+function Collapsible({
+  children,
+  title,
+  checked,
+}: {
+  children: ReactNode;
+  title: string;
+  checked: boolean;
+}) {
+  const [expanded, setExpanded] = useState(checked);
+  return (
+    <div className='mb-3 border-e'>
+      <div
+        onClick={() => setExpanded((prev) => !prev)}
+        className='p-3 pe-5 border rounded-md cursor-pointer hover:bg-secondary/50 flex items-center justify-between'
+      >
+        {title}
+
+        <ChevronDown
+          className={`${cn(
+            "size-5 duration-300 transition-all",
+            expanded ? "rotate-180" : ""
+          )}`}
+        />
+      </div>
+      {expanded && children}
+    </div>
+  );
+}
