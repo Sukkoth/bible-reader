@@ -1,6 +1,6 @@
 import Link from "next/link";
 import CalendarStatItem from "./CalendarStatItem";
-import { ChevronRight } from "lucide-react";
+import { AlertTriangle, CheckCheck, ChevronRight } from "lucide-react";
 
 type Props = {
   type: "chapters" | "pages" | string;
@@ -9,8 +9,18 @@ type Props = {
   text: string;
   subText: string;
   to: string;
+  ended?: boolean;
 };
-function PlansItem({ target, progress, type, text, subText, to }: Props) {
+function PlansItem({
+  target,
+  progress,
+  type,
+  text,
+  subText,
+  to,
+  ended,
+}: Props) {
+  const isDone = Math.round((progress / target) * 100) === 100;
   return (
     <Link
       href={to}
@@ -29,7 +39,13 @@ function PlansItem({ target, progress, type, text, subText, to }: Props) {
           <p className='text-xs text-stone-400 pt-1'>{subText}</p>
         </div>
         <div className='rounded-lg p-1 hidden xxs:block'>
-          <ChevronRight />
+          {isDone ? (
+            <CheckCheck className='size-5' />
+          ) : ended ? (
+            <AlertTriangle className='size-5' />
+          ) : (
+            <ChevronRight className='size-5' />
+          )}
         </div>
       </div>
     </Link>

@@ -17,14 +17,11 @@ import { redirect } from "next/navigation";
 async function Login() {
   const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
-  console.log("user is", data?.user);
-  console.log("error is", error?.message);
+
   if (!error && data.user.id) {
-    console.log("redirecting");
     return redirect("/home");
   }
 
-  console.log("returning design");
   return (
     <div className='flex flex-col h-full flex-grow items-center justify-center'>
       <Card className='mx-5 w-full bg-transparent'>

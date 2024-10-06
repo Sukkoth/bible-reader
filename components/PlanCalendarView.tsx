@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -11,32 +13,35 @@ import {
   differenceInCalendarDays,
   format,
   isBefore,
+  isPast,
   isSameDay,
 } from "date-fns";
 import { useEffect, useState } from "react";
-import { TbCalendarStats } from "react-icons/tb";
+import { CalendarDays } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
-import { useUpdateScheduleItemStatus } from "@/react-query/mutations";
+// import { useUpdateScheduleItemStatus } from "@/react-query/mutations";
 import { Checkbox } from "./ui/checkbox";
 
 type Props = {
   schedules: UserPlan;
-  onItemStatusUpdate: () => void;
+  // onItemStatusUpdate: () => void;
 };
 export default function PlanCalendarView({
   schedules,
-  onItemStatusUpdate,
-}: Props) {
+}: // onItemStatusUpdate,
+Props) {
   const today = new Date();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(
     isBefore(today, schedules.startDate)
       ? 0
+      : isPast(schedules.endDate)
+      ? schedules.schedules.length - 1
       : differenceInCalendarDays(today, schedules.startDate)
   );
   const [selectedDate, setSelectedDate] = useState(current);
-  const handleStatusChange = useUpdateScheduleItemStatus();
+  // const handleStatusChange = useUpdateScheduleItemStatus();
 
   function onChangeGoalStatus(
     scheduleId: string,
@@ -46,10 +51,10 @@ export default function PlanCalendarView({
     const items = schedules.schedules[selectedDate];
     items.items[goalIndex].status = checked ? "COMPLETED" : "PENDING";
 
-    handleStatusChange.mutate({
-      scheduleId,
-      items,
-    });
+    // handleStatusChange.mutate({
+    //   scheduleId,
+    //   items,
+    // });
 
     // if all the items in that day are complete, scroll to the next day
     // const complete = items.items?.every((item) => item.status === "COMPLETED");
@@ -58,7 +63,7 @@ export default function PlanCalendarView({
     // }
     //don't think nice for UX but keep it anyway
 
-    onItemStatusUpdate();
+    // onItemStatusUpdate();
   }
 
   useEffect(() => {
@@ -120,7 +125,7 @@ export default function PlanCalendarView({
                   } border-none`}
                 >
                   <CardContent className='flex items-center justify-center p-6 flex-col'>
-                    <TbCalendarStats size={20} />
+                    <CalendarDays size={20} />
                     <span className='text-sm pt-2 font-semibold'>
                       {format(parsedDate, "do")}
                     </span>
@@ -138,15 +143,16 @@ export default function PlanCalendarView({
       </Carousel>
       <Separator className='my-5' />
       <div className='space-y-2'>
-        {schedules.schedules[selectedDate].items.map((item, index) => (
-          <CalendarViewItem
-            key={item.goal}
-            scheduleId={schedules.schedules[selectedDate].id}
-            index={index}
-            item={item}
-            onChange={onChangeGoalStatus}
-          />
-        ))}
+        {schedules.schedules[selectedDate] &&
+          schedules.schedules[selectedDate].items.map((item, index) => (
+            <CalendarViewItem
+              key={item.goal}
+              scheduleId={schedules.schedules[selectedDate].id}
+              index={index}
+              item={item}
+              onChange={onChangeGoalStatus}
+            />
+          ))}
       </div>
     </div>
   );

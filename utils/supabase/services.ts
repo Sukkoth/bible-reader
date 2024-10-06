@@ -8,7 +8,7 @@ export async function GET_USER() {
   const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error) {
-    throw new Error("Could not get user");
+    return { user: null, profile: null };
   }
 
   const profileData = await GET_PROFILE(data.user.id);

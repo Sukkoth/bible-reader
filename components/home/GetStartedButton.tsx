@@ -3,10 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
-function GetStartedButton() {
+type Props = {
+  isAuth: boolean;
+};
+
+function GetStartedButton({ isAuth }: Props) {
   const router = useRouter();
   return (
-    <Button className='mt-5' size={"lg"} onClick={() => router.push("/login")}>
+    <Button
+      className='mt-5'
+      size={"lg"}
+      onClick={() => router.push(isAuth ? "/home" : "/login")}
+    >
       Let&apos;s get started
     </Button>
   );

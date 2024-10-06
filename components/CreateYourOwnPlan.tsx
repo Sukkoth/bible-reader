@@ -51,10 +51,7 @@ function CreateYourOwnPlan() {
 
   useEffect(() => {
     if (handleCreatePlan.data?.plan.id) {
-      console.log("redirect fore", handleCreatePlan.data?.plan.name);
       router.push(`/schedule/${handleCreatePlan.data?.plan.id}`);
-    } else {
-      console.log("could not redirect", handleCreatePlan.data);
     }
   }, [handleCreatePlan.data, router]);
 

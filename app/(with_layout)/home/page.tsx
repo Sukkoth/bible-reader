@@ -10,6 +10,8 @@ import Link from "next/link";
 import DailyStats from "@/components/DailyStats";
 import Drawer from "@/components/Drawer";
 import HomeNavButtons from "@/components/HomeNavButtons";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 async function Home() {
   const { user, profile } = await GET_USER();
@@ -60,7 +62,7 @@ async function Home() {
         <h1 className='text-sm xxs:text-xl xs:text-2xl'>
           {format(new Date(), "MMMM, y")}
         </h1>
-        <div className='grid grid-cols-4 xxs:grid-cols-6 xs:grid-cols-8 gap-2 pt-3'>
+        <div className='grid grid-cols-4 xxs:grid-cols-6 xs:grid-cols-8 max-w-[450px] gap-2 pt-3'>
           <DailyStats mapped={mapped} />
         </div>
         <p className='pt-2'>
@@ -79,25 +81,31 @@ async function Home() {
             View all
           </Link>
         </div>
-        {todaysPlans?.length
-          ? todaysPlans.map((plan) => {
-              const target = plan.schedules[0].items.length;
-              const progress = plan.schedules[0].items.filter(
-                (item) => item.status === "COMPLETED"
-              ).length;
-              return (
-                <PlansItem
-                  key={plan.id}
-                  target={target}
-                  progress={progress}
-                  type='Chapters'
-                  text={plan.plans.name}
-                  subText={`${progress}/${target} Chapters`}
-                  to={`/plans/${plan.id}`}
-                />
-              );
-            })
-          : "You got no plans for today"}
+        {todaysPlans?.length ? (
+          todaysPlans.map((plan) => {
+            const target = plan.schedules[0].items.length;
+            const progress = plan.schedules[0].items.filter(
+              (item) => item.status === "COMPLETED"
+            ).length;
+            return (
+              <PlansItem
+                key={plan.id}
+                target={target}
+                progress={progress}
+                type='Chapters'
+                text={plan.plans.name}
+                subText={`${progress}/${target} Chapters`}
+                to={`/plans/${plan.id}`}
+              />
+            );
+          })
+        ) : (
+          <Alert className='mt-5 shadow-md'>
+            <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />
+            <AlertTitle className='font-bold'>No plans</AlertTitle>
+            <AlertDescription>You got no plans for today</AlertDescription>
+          </Alert>
+        )}
       </div>
     </div>
   );

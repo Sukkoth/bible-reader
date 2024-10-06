@@ -4,8 +4,27 @@ import { Space_Mono } from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Bible Reader",
-  description: "A journey into the world of amazing grace",
+  title: "Bible Reader - Explore the Word of God",
+  description:
+    "Embark on a spiritual journey with our Bible Reader, and delve into the world of amazing grace.",
+  keywords: [
+    "Bible",
+    "Reader",
+    "Spiritual",
+    "Journey",
+    "Faith",
+    "Religion",
+    "Christianity",
+    "Scripture",
+    "Study",
+    "Devotion",
+  ],
+  authors: [
+    {
+      name: "Gadisa Teklu",
+      url: "https://gadisa.onrender.com",
+    },
+  ],
 };
 
 const spaceFont = Space_Mono({

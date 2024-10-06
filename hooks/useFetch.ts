@@ -37,6 +37,7 @@ function useFetch<T>(
         const result: T = await response.json();
         setData(result);
       } catch (err) {
+        console.log(err);
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
         );
