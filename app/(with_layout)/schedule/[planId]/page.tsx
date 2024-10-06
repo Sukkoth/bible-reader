@@ -357,10 +357,10 @@ function Collapsible({
 }) {
   const [expanded, setExpanded] = useState(checked);
   return (
-    <div className='mb-3 border-e'>
+    <div className='mb-3'>
       <div
         onClick={() => setExpanded((prev) => !prev)}
-        className='p-3 pe-5 border rounded-md cursor-pointer hover:bg-secondary/50 flex items-center justify-between'
+        className='p-3 pe-5 border rounded-md cursor-pointer hover:bg-secondary/50 flex items-center justify-between shadow-sm'
       >
         {title}
 
