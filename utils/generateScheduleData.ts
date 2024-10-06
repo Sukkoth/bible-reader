@@ -44,12 +44,14 @@ export function GenerateScheduleDataForDb({
 
   //distribute chapters on date
   const plan = [];
+  let currentDate = startDate;
 
   for (let i = 0; i < booksWithChapters.length; i += chapterCount) {
     plan.push({
-      date: format(addDays(startDate!, i), "yyyy-MM-dd HH:mm:ss"),
+      date: format(currentDate, "yyyy-MM-dd"),
       items: booksWithChapters.slice(i, i + chapterCount),
     });
+    currentDate = addDays(currentDate, 1);
   }
 
   const finalDataToInsert: CreatePlanSchedule = {
