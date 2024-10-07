@@ -1,0 +1,99 @@
+{
+  "name": "Solace",
+  "short_name": "Solace",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "lang": "en",
+  "scope": "/",
+  "description": "Solace is a comprehensive tool designed to assist you in maintaining a consistent Bible reading habit. It offers a range of features to help you stay on track, including personalized reading plans, progress tracking, and popular reading plans. With Solace, you can deepen your understanding of the Bible and cultivate a stronger spiritual connection.",
+  "theme_color": "#171717",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/all-plans.png",
+      "type": "image/png",
+      "sizes": "487x947",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/lightmode.png",
+      "type": "image/png",
+      "sizes": "477x949",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/create-plan.png",
+      "type": "image/png",
+      "sizes": "485x951",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/generate-schedule.png",
+      "type": "image/png",
+      "sizes": "471x960",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/home.png",
+      "type": "image/png",
+      "sizes": "464x952",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/plan-progress.png",
+      "type": "image/png",
+      "sizes": "467x942",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/plan-started.png",
+      "type": "image/png",
+      "sizes": "479x949",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/seleted-template.png",
+      "type": "image/png",
+      "sizes": "483x953",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/templates.png",
+      "type": "image/png",
+      "sizes": "480x950",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/sidebar.png",
+      "type": "image/png",
+      "sizes": "481x954",
+      "form_factor": "narrow"
+    }
+  ]
+}

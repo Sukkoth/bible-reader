@@ -8,7 +8,7 @@ function HomeNavButtons() {
     <div className='mt-5 space-y-2'>
       <Link
         href='plans/popular'
-        className='w-full rounded-3xl py-[10px] center-all text-sm hover:bg-primary/90 bg-primary'
+        className='w-full text-white rounded-3xl py-[10px] center-all text-sm hover:bg-primary/90 bg-primary'
       >
         <Compass className='mr-2 h-4 w-4' /> Browse Popular Plans
       </Link>

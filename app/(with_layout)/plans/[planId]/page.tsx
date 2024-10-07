@@ -127,7 +127,7 @@ async function Plan({ params }: { params: { planId: string } }) {
 
           <AlertDialog>
             <AlertDialogTrigger className='w-full'>
-              <div className='w-full bg-destructive h-12 rounded-md px-8 flex items-center justify-center text-sm hover:bg-destructive/90'>
+              <div className='w-full bg-destructive h-12 rounded-md px-8 flex items-center justify-center text-sm hover:bg-destructive/90 text-white'>
                 Delete Plan
               </div>
             </AlertDialogTrigger>

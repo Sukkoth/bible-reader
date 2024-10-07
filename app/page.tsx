@@ -9,13 +9,13 @@ export default async function Home() {
       <Image
         src='/background.jpg'
         alt='bg'
-        layout='fill'
-        objectFit='cover'
+        fill
+        style={{ objectFit: "cover" }}
         className='-z-10'
       />
 
-      <h1 className='text-4xl font-bold'>Bible Reader</h1>
-      <h2 className='pt-2 text-center px-7'>
+      <h1 className='text-4xl font-bold text-white'>Bible Reader</h1>
+      <h2 className='pt-2 text-center px-7 text-white'>
         Track your daily Bible reading journey with ease.
       </h2>
       <GetStartedButton isAuth={!!user?.id} />

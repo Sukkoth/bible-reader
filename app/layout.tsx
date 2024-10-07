@@ -19,11 +19,17 @@ export const metadata: Metadata = {
     "Study",
     "Devotion",
   ],
+  generator: "Next.js",
+  manifest: "/manifest.json",
   authors: [
     {
       name: "Gadisa Teklu",
       url: "https://gadisa.onrender.com",
     },
+  ],
+  icons: [
+    { rel: "apple-touch-icon", url: "/apple-touch-icon.png" },
+    { rel: "icon", url: "/pwa-192x192.png" },
   ],
 };
 
@@ -31,6 +37,10 @@ const spaceFont = Space_Mono({
   weight: ["400", "700"],
   subsets: ["latin"],
 });
+
+export const viewport = {
+  themeColor: "#fff",
+};
 
 export default function RootLayout({
   children,
