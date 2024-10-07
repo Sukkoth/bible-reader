@@ -39,7 +39,7 @@ const spaceFont = Space_Mono({
 });
 
 export const viewport = {
-  themeColor: "#fff",
+  themeColor: "#171717",
 };
 
 export default function RootLayout({

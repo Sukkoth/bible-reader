@@ -36,63 +36,39 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/all-plans.png",
-      "type": "image/png",
-      "sizes": "487x947",
+      "src": "/screenshots/1.jpg",
+      "type": "image/jpeg",
+      "sizes": "1080x1920",
       "form_factor": "narrow"
     },
     {
-      "src": "/screenshots/lightmode.png",
-      "type": "image/png",
-      "sizes": "477x949",
+      "src": "/screenshots/2.jpg",
+      "type": "image/jpeg",
+      "sizes": "1080x1920",
       "form_factor": "narrow"
     },
     {
-      "src": "/screenshots/create-plan.png",
-      "type": "image/png",
-      "sizes": "485x951",
+      "src": "/screenshots/3.jpg",
+      "type": "image/jpeg",
+      "sizes": "1080x1920",
       "form_factor": "narrow"
     },
     {
-      "src": "/screenshots/generate-schedule.png",
-      "type": "image/png",
-      "sizes": "471x960",
+      "src": "/screenshots/4.jpg",
+      "type": "image/jpeg",
+      "sizes": "1080x1920",
       "form_factor": "narrow"
     },
     {
-      "src": "/screenshots/home.png",
-      "type": "image/png",
-      "sizes": "464x952",
+      "src": "/screenshots/5.jpg",
+      "type": "image/jpeg",
+      "sizes": "1080x1920",
       "form_factor": "narrow"
     },
     {
-      "src": "/screenshots/plan-progress.png",
-      "type": "image/png",
-      "sizes": "467x942",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshots/plan-started.png",
-      "type": "image/png",
-      "sizes": "479x949",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshots/seleted-template.png",
-      "type": "image/png",
-      "sizes": "483x953",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshots/templates.png",
-      "type": "image/png",
-      "sizes": "480x950",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshots/sidebar.png",
-      "type": "image/png",
-      "sizes": "481x954",
+      "src": "/screenshots/6.jpg",
+      "type": "image/jpeg",
+      "sizes": "1080x1920",
       "form_factor": "narrow"
     }
   ]
