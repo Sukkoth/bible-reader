@@ -122,10 +122,7 @@ async function Plan({ params }: { params: { planId: string } }) {
               </AlertDescription>
             </Alert>
           )}
-          <PlanCalendarView
-            schedules={plan}
-            // onItemStatusUpdate={handleUpdatePlanItemStatus}
-          />
+          <PlanCalendarView schedules={plan} />
           <Separator className='my-5' />
 
           <AlertDialog>

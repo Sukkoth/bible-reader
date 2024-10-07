@@ -20,17 +20,13 @@ import { useEffect, useState } from "react";
 import { CalendarDays } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
-// import { useUpdateScheduleItemStatus } from "@/react-query/mutations";
 import { Checkbox } from "./ui/checkbox";
+import { updateScheduleItemStatus } from "@/app/(with_layout)/plans/[planId]/_actions";
 
 type Props = {
   schedules: UserPlan;
-  // onItemStatusUpdate: () => void;
 };
-export default function PlanCalendarView({
-  schedules,
-}: // onItemStatusUpdate,
-Props) {
+export default function PlanCalendarView({ schedules }: Props) {
   const today = new Date();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(
@@ -41,29 +37,15 @@ Props) {
       : differenceInCalendarDays(today, schedules.startDate)
   );
   const [selectedDate, setSelectedDate] = useState(current);
-  // const handleStatusChange = useUpdateScheduleItemStatus();
 
-  function onChangeGoalStatus(
+  async function onChangeGoalStatus(
     scheduleId: string,
     goalIndex: number,
     checked: boolean
   ) {
     const items = schedules.schedules[selectedDate];
     items.items[goalIndex].status = checked ? "COMPLETED" : "PENDING";
-
-    // handleStatusChange.mutate({
-    //   scheduleId,
-    //   items,
-    // });
-
-    // if all the items in that day are complete, scroll to the next day
-    // const complete = items.items?.every((item) => item.status === "COMPLETED");
-    // if (complete) {
-    //   setSelectedDate(current + 1);
-    // }
-    //don't think nice for UX but keep it anyway
-
-    // onItemStatusUpdate();
+    await updateScheduleItemStatus({ scheduleId, items });
   }
 
   useEffect(() => {
