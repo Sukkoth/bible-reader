@@ -58,16 +58,16 @@ async function Home() {
         <Drawer />
       </div>
       <HomeNavButtons />
-      <div className='mt-10'>
+      <div className='mt-10 mx-auto w-full flex flex-col items-center'>
         <h1 className='text-sm xxs:text-xl xs:text-2xl'>
           {format(new Date(), "MMMM, y")}
         </h1>
-        <div className='grid grid-cols-4 xxs:grid-cols-6 xs:grid-cols-8 max-w-[450px] gap-2 pt-3'>
+        <div className='grid grid-cols-4 xxs:grid-cols-6 xs:grid-cols-8 max-w-[600px] gap-2 pt-3'>
           <DailyStats mapped={mapped} />
         </div>
-        <p className='pt-2'>
+        {/* <p className='pt-2'>
           <span className='text-primary'>+3.2%</span> from last month
-        </p>
+        </p> */}
       </div>
       <div className='mt-10'>
         <div className='w-full flex justify-between items-center'>
