@@ -35,7 +35,7 @@ function CalendarStatItem({
     } else if (percentage > 25) {
       pathColor = "hsl(0, 100%, 50%)";
     } else {
-      pathColor = "hsl(240, 100%, 50%)";
+      pathColor = "hsl(0, 0.8928571428571397%, 56.07843137254902%)";
     }
     strokeColor = pathColor.replace(")", ", 0.2)"); //add opacity to the pathColor to get stroke color
   } else {

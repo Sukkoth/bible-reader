@@ -22,15 +22,24 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useTheme } from "next-themes";
+import { logout } from "@/actions";
+import { Button } from "./ui/button";
 
 function Drawer() {
   const [showDrawer, setShowDrawer] = useState(false);
+  const [isLoggingOut, startTransition] = useTransition();
   const { setTheme, theme } = useTheme();
 
   function handleSetTheme() {
     setTheme(theme === "light" ? "dark" : "light");
+  }
+
+  function handleLogout() {
+    startTransition(async () => {
+      await logout();
+    });
   }
 
   return (
@@ -79,13 +88,13 @@ function Drawer() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  // onClick={() => handleLogout.mutate()}
+                <Button
+                  disabled={isLoggingOut}
+                  onClick={handleLogout}
                   className='bg-red-700 hover:bg-red-600'
                 >
-                  {/* {handleLogout.isPending ? "Logging out" : "Continue"} */}
-                  Logout
-                </AlertDialogAction>
+                  {isLoggingOut ? "Logging out" : "Continue"}
+                </Button>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

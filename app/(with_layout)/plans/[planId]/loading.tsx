@@ -1,7 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function PlanLoading() {
+export default function Loading() {
   return (
     <div>
       <Skeleton className='size-10' />
@@ -10,13 +10,13 @@ export function PlanLoading() {
       </div>
       <div className='mt-6 min-h-[75dvh] border rounded-2xl p-5 px-3 sm:px-6 bg-card'>
         <Skeleton className='size-40 mx-auto rounded-full full' />
-        <div className='mt-6 grid grid-cols-1 xxs:grid-cols-2 xs:grid-cols-3 gap-2 w-fit mx-auto'>
-          <Skeleton className='h-24 sm:size-40' />
-          <Skeleton className='h-24 sm:size-40' />
-          <Skeleton className='h-24 sm:size-40' />
-          <Skeleton className='h-24 sm:size-40' />
-          <Skeleton className='h-24 sm:size-40' />
-          <Skeleton className='h-24 sm:size-40' />
+        <div className='mt-6 grid grid-cols-1 xxs:grid-cols-2 xs:grid-cols-3 gap-2'>
+          <Skeleton className='h-24' />
+          <Skeleton className='h-24' />
+          <Skeleton className='h-24' />
+          <Skeleton className='h-24' />
+          <Skeleton className='h-24' />
+          <Skeleton className='h-24' />
         </div>
         <Separator className='my-5' />
         <div>
@@ -45,5 +45,3 @@ export function PlanLoading() {
     </div>
   );
 }
-
-export default PlanLoading;

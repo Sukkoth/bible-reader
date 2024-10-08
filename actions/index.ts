@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 import { LoginSchema } from "@/lib/schemas/authSchema";
+import { Provider } from "@supabase/supabase-js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function login(prevState: any, formData: FormData) {
@@ -61,22 +62,29 @@ export async function register(prevState: any, formData: FormData) {
   redirect("/");
 }
 
-export async function googleAuth() {
-  const supabase = createClient();
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: process.env.APP_URL + "/home",
-    },
-  });
-
-  if (!error) redirect(data.url);
-}
-
 export async function logout() {
   const supabase = createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect("/");
+}
+
+export async function loginWithSocial(provider: Provider) {
+  try {
+    const supabase = createClient();
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: process.env.NEXT_APP_URL + "/api/auth" },
+    });
+
+    console.log("SOCIAL AUTH", data, error);
+
+    if (error) {
+      throw error;
+    }
+    return { error: null, url: data.url };
+  } catch {
+    return { error: "Error logging in" };
+  }
 }

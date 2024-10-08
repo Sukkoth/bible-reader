@@ -56,32 +56,32 @@ async function Plan({ params }: { params: { planId: string } }) {
 
   const planDetail = [
     {
-      icon: <Send className='size-5 sm:size-7 md:size-7' />,
+      icon: <Send className='size-5' />,
       header: "Started",
       subText: format(plan.startDate, "MMM d,y"),
     },
     {
-      icon: <Hourglass className='size-5 sm:size-7 md:size-7' />,
+      icon: <Hourglass className='size-5' />,
       header: "Ends",
       subText: format(plan.endDate, "MMM d,y"),
     },
     {
-      icon: <BookOpenText className='size-5 sm:size-7 md:size-7' />,
+      icon: <BookOpenText className='size-5' />,
       header: "Per Session",
       subText: `${plan.perDay}`,
     },
     {
-      icon: <CalendarDays className='size-5 sm:size-7 md:size-7' />,
+      icon: <CalendarDays className='size-5' />,
       header: "Per Week",
       subText: `${plan.perDay * 7} Sessions `,
     },
     {
-      icon: <CheckCheck className='size-5 sm:size-7 md:size-7' />,
+      icon: <CheckCheck className='size-5' />,
       header: "Completed",
       subText: `${completedPercent}%`,
     },
     {
-      icon: <LayoutDashboard className='size-5 sm:size-7 md:size-7' />,
+      icon: <LayoutDashboard className='size-5' />,
       header: "Type",
       subText: "Bible Book",
     },

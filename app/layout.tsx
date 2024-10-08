@@ -4,9 +4,9 @@ import { Space_Mono } from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Bible Reader - Explore the Word of God",
+  title: "Bible Reader",
   description:
-    "Embark on a spiritual journey with our Bible Reader, and delve into the world of amazing grace.",
+    "This app is a comprehensive tool designed to assist you in maintaining a consistent Bible reading habit. It offers a range of features to help you stay on track, including personalized reading plans, and progress tracking.",
   keywords: [
     "Bible",
     "Reader",

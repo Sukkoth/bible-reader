@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 
 import LoginForm from "@/components/forms/LoginForm";
-import GoogleAuth from "@/components/GoogleAuth";
+import SocialAuth from "@/components/SocialAuth";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -42,8 +42,9 @@ async function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className='space-y-5'>
-            <GoogleAuth />
+          <div className='space-y-3'>
+            <SocialAuth provider='google' iconPath='/google-icon.svg' />
+            <SocialAuth provider='github' iconPath='/github-icon.svg' />
           </div>
         </CardContent>
       </Card>

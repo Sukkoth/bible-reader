@@ -26,6 +26,7 @@ function DailyStats({ mapped }: Props) {
           type='h'
           text={index + 1}
           key={index}
+          rangeColor
         />
       );
     }
