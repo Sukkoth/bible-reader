@@ -27,7 +27,7 @@
       "purpose": "maskable"
     }
   ],
-  "start_url": "https://bible-reading-ten.vercel.app",
+  "start_url": "https://thebiblereader.vercel.app",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
@@ -75,19 +75,15 @@
   "dir": "rtl",
   "lang": "en",
   "orientation": "portrait-primary",
-  "display_override": [
-    "standalone",
-    "window-controls-overlay"
-  ],
   "shortcuts": [
     {
       "name": "My Plans",
-      "url": "https://bible-reading-ten.vercel.app/plans",
+      "url": "https://thebiblereader.vercel.app/plans",
       "description": "Browse your plans"
     },
     {
       "name": "Create Plan",
-      "url": "https://bible-reading-ten.vercel.app/plans/create",
+      "url": "https://thebiblereader.vercel.app/plans/create",
       "description": "Create new reading plan"
     }
   ],
@@ -99,5 +95,11 @@
     "personalization",
     "productivity",
     "social"
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+biblereader",
+      "url": "/shortcut?url=%s"
+    }
   ]
 }
