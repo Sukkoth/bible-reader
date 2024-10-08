@@ -70,5 +70,34 @@
       "sizes": "1080x1920",
       "form_factor": "narrow"
     }
+  ],
+  "id": "bible-reader-app",
+  "dir": "rtl",
+  "lang": "en",
+  "orientation": "portrait-primary",
+  "display_override": [
+    "standalone",
+    "window-controls-overlay"
+  ],
+  "shortcuts": [
+    {
+      "name": "My Plans",
+      "url": "https://bible-reading-ten.vercel.app/plans",
+      "description": "Browse your plans"
+    },
+    {
+      "name": "Create Plan",
+      "url": "https://bible-reading-ten.vercel.app/plans/create",
+      "description": "Create new reading plan"
+    }
+  ],
+  "categories": [
+    "books",
+    "education",
+    "entertainment",
+    "lifestyle",
+    "personalization",
+    "productivity",
+    "social"
   ]
 }
