@@ -59,7 +59,7 @@ async function Home() {
         <Drawer />
       </div>
       <HomeNavButtons />
-      <div className='mt-10 mx-auto w-full flex flex-col items-center'>
+      <div className='mt-10 mx-auto w-full'>
         <h1 className='text-sm xxs:text-xl xs:text-2xl'>
           {format(new Date(), "MMMM, y")}
         </h1>

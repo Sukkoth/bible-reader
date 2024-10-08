@@ -78,8 +78,6 @@ export async function loginWithSocial(provider: Provider) {
       options: { redirectTo: process.env.NEXT_APP_URL + "/api/auth" },
     });
 
-    console.log("SOCIAL AUTH", data, error);
-
     if (error) {
       throw error;
     }
