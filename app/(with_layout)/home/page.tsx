@@ -14,13 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 async function Home() {
-  console.log("home");
   const { user, profile } = await GET_USER();
-  console.log("user, profile", user, profile);
-  // if (!user) {
-  //   console.log("THAT ERROR! NOT FOUND USER", user);
-  //   return;
-  // }
 
   const todaysPlans = await GET_TODAYS_PLANS(user!.id);
   const monthStats = await GET_CURRENT_MONTH_DAILY_PROGRESS(user!.id);

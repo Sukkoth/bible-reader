@@ -1,9 +1,7 @@
 import GetStartedButton from "@/components/home/GetStartedButton";
-import { GET_USER } from "@/utils/supabase/services";
 import Image from "next/image";
 
 export default async function Home() {
-  const { user } = await GET_USER();
   return (
     <main className='h-full w-full center-all flex-col'>
       <Image
@@ -18,7 +16,7 @@ export default async function Home() {
       <h2 className='pt-2 text-center px-7 text-white'>
         Track your daily Bible reading journey with ease.
       </h2>
-      <GetStartedButton isAuth={!!user?.id} />
+      <GetStartedButton />
     </main>
   );
 }
