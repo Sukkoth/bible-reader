@@ -12,9 +12,15 @@ import Drawer from "@/components/Drawer";
 import HomeNavButtons from "@/components/HomeNavButtons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import NotificationRequest from "@/components/NotificationRequest";
+import { redirect } from "next/navigation";
 
 async function Home() {
   const { user, profile } = await GET_USER();
+
+  if (user?.id && (!profile || !profile?.first_name)) {
+    redirect("/profile/complete-profile");
+  }
 
   const todaysPlans = await GET_TODAYS_PLANS(user!.id);
   const monthStats = await GET_CURRENT_MONTH_DAILY_PROGRESS(user!.id);
@@ -42,12 +48,9 @@ async function Home() {
     mapped = Object.values(toBeMapped);
   }
 
-  if (user?.id && (!profile || !profile?.first_name)) {
-    return <h1>PLEASE COMPLETE PROFILE</h1>;
-  }
-
   return (
     <div className='relative overflow-hidden'>
+      <NotificationRequest />
       <div className='pt-5 flex justify-between'>
         <div>
           <h1 className='text-xl xxs:text-2xl xs:text-3xl'>Hello</h1>

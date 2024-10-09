@@ -41,12 +41,7 @@ async function Login() {
             ----------- OR CONTINUE WITH -----------
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className='space-y-3'>
-            <SocialAuth provider='google' iconPath='/google-icon.svg' />
-            <SocialAuth provider='github' iconPath='/github-icon.svg' />
-          </div>
-        </CardContent>
+        <SocialAuth />
       </Card>
       <p className='pt-5 text-sm'>
         Don&apos;t have an account?{" "}

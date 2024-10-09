@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import SocialAuth from "@/components/SocialAuth";
 
 function Register() {
   return (
@@ -17,7 +18,7 @@ function Register() {
       <Card className='mx-5 w-full bg-transparent'>
         <CardHeader>
           <CardTitle className='text-xl xxs:text-2xl xs:text-3xl'>
-            Create your new account
+            Create new account
           </CardTitle>
           <CardDescription>
             Enter your email to create your account
@@ -31,13 +32,7 @@ function Register() {
             ----------- OR CONTINUE WITH -----------
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className='space-y-5'>
-            <Button variant={"outline"} className='w-full' size='lg'>
-              Google
-            </Button>
-          </div>
-        </CardContent>
+        <SocialAuth />
       </Card>
       <p className='pt-5 text-sm'>
         Already have an account?{" "}

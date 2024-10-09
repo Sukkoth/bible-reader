@@ -96,6 +96,24 @@ export async function UPDATE_PROFILE(
   return data;
 }
 
+export async function HANDLE_NOTIFICATION_SUBSCRIPTION(
+  notification: Notification,
+  userId: string
+) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ notification })
+    .eq("user_id", userId)
+    .select("notification")
+    .single();
+  if (error) {
+    console.error("Could not create notification subscription", error);
+    throw new Error(error?.message || "Could not create notification");
+  }
+  return data.notification;
+}
+
 //* PLAN SERVICES
 export async function CREATE_PLAN(
   formData: CreatePlanSchemaType,

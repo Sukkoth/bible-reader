@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { LoginSchema } from "@/lib/schemas/authSchema";
 import { Provider } from "@supabase/supabase-js";
+import { sendNotification } from "@/notifications/NotificationSender";
+import { PushSubscription } from "web-push";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function login(prevState: any, formData: FormData) {
@@ -85,4 +87,21 @@ export async function loginWithSocial(provider: Provider) {
   } catch {
     return { error: "Error logging in" };
   }
+}
+
+type NotificationActionArgs = {
+  title: string;
+  message: string;
+  subscription: PushSubscription;
+};
+export async function notificationAction(args: NotificationActionArgs) {
+  console.log("sending notification to", args.subscription.endpoint);
+  await fetch(`${process.env.NEXT_APP_URL}/api/web-push/send`, {
+    method: "POST",
+    body: JSON.stringify(args),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return;
 }
