@@ -113,16 +113,16 @@ const drawerItems = [
     label: "My Plans",
     to: "/plans",
   },
-  {
-    icon: <User className='size-5' />,
-    label: "Profile",
-    to: "/profile",
-  },
-  {
-    icon: <Settings className='size-5' />,
-    label: "Settings",
-    to: "/settings",
-  },
+  // {
+  //   icon: <User className='size-5' />,
+  //   label: "Profile",
+  //   to: "/profile",
+  // },
+  // {
+  //   icon: <Settings className='size-5' />,
+  //   label: "Settings",
+  //   to: "/settings",
+  // },
 ];
 
 type ItemProps = {

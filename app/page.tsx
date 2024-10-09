@@ -1,7 +1,13 @@
 import GetStartedButton from "@/components/home/GetStartedButton";
+import { GET_USER } from "@/utils/supabase/services";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
+  const authData = await GET_USER();
+  if (authData.user) {
+    redirect("/home");
+  }
   return (
     <main className='h-full w-full center-all flex-col'>
       <Image

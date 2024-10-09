@@ -5,11 +5,18 @@ import { format } from "date-fns";
 import { createClient } from "./server";
 import { redirect } from "next/navigation";
 
-export async function GET_USER() {
+type GetUserArgs = {
+  withRedirect: boolean;
+};
+export async function GET_USER(args: GetUserArgs = { withRedirect: true }) {
   const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error) {
-    redirect("/login");
+    if (args.withRedirect) {
+      redirect("/login");
+    } else {
+      return { user: null };
+    }
   }
 
   const profileData = await GET_PROFILE(data.user.id);
