@@ -59,7 +59,7 @@ async function Home() {
           </h1>
           <span className='text-xs'>{new Date().toDateString()}</span>
         </div>
-        <Drawer />
+        <Drawer avatar={profile?.avatar} />
       </div>
       <HomeNavButtons />
       <div className='mt-10 mx-auto w-full'>

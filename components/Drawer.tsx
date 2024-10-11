@@ -26,8 +26,13 @@ import { useState, useTransition } from "react";
 import { useTheme } from "next-themes";
 import { logout } from "@/actions";
 import { Button } from "./ui/button";
+import Image from "next/image";
 
-function Drawer() {
+type Props = {
+  avatar?: string;
+};
+
+function Drawer({ avatar }: Props) {
   const [showDrawer, setShowDrawer] = useState(false);
   const [isLoggingOut, startTransition] = useTransition();
   const { setTheme, theme } = useTheme();
@@ -43,13 +48,23 @@ function Drawer() {
   }
 
   return (
-    <div>
+    <>
       <div className='flex items-center gap-2 w-fit h-fit'>
         <div
           className='text-primary hover:opacity-80 cursor-pointer'
           onClick={() => setShowDrawer(true)}
         >
-          <MenuIcon className='text-3xl' />
+          {avatar ? (
+            <Image
+              src={avatar}
+              width={38}
+              height={38}
+              alt='avatar'
+              className='rounded-full object-cover dark:border-stone-500 border-stone-400 border-2 mt-2'
+            />
+          ) : (
+            <MenuIcon className='text-3xl' />
+          )}
         </div>
       </div>
       <div
@@ -103,7 +118,7 @@ function Drawer() {
       {showDrawer && (
         <div className='absolute inset-0 backdrop-blur-[2px] z-10'></div>
       )}
-    </div>
+    </>
   );
 }
 
