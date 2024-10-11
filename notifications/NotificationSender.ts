@@ -1,4 +1,4 @@
-import webpush, { PushSubscription } from "web-push";
+import webpush, { PushSubscription, WebPushError } from "web-push";
 
 webpush.setVapidDetails(
   "mailto:suukootj@gmail.com",
@@ -11,7 +11,7 @@ export const sendNotification = async (
   title: string,
   message: string,
   url?: string
-) => {
+): Promise<{ statusCode: number }> => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pushPayload: any = {
     title: title,
@@ -19,15 +19,23 @@ export const sendNotification = async (
     //image: "/logo.png", if you want to add an image
     icon: "/pwa-192x192.png",
     url: url ?? process.env.NOTIFICATION_URL ?? "/",
-    // badge: "/google-icon.svg",
+    badge: "/pwa-192x192.png",
   };
 
-  webpush
-    .sendNotification(subscription, JSON.stringify(pushPayload))
-    .then(() => {
-      console.log("Notification sent", pushPayload);
-    })
-    .catch((error) => {
-      console.error("Error sending notification", error);
-    });
+  try {
+    await webpush.sendNotification(subscription, JSON.stringify(pushPayload));
+    console.log(new Date().toISOString(), "Notification sent", pushPayload);
+    return {
+      statusCode: 200,
+    };
+  } catch (error: unknown) {
+    console.error(
+      new Date().toISOString(),
+      "Error sending notification",
+      error
+    );
+    return {
+      statusCode: (error as WebPushError).statusCode,
+    };
+  }
 };
