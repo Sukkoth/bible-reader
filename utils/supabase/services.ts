@@ -283,27 +283,28 @@ export async function GET_TEMPLATES() {
   return data;
 }
 
-export async function GET_CURRENT_MONTH_DAILY_PROGRESS(userId: string) {
+export async function GET_CURRENT_MONTH_DAILY_PROGRESS(
+  userId: string,
+  userTimezone: string = "Africa/Nairobi"
+) {
   const supabase = createClient();
+
+  // Get the start and end dates for the current month in the user's timezone
+  const startDate = new Date(
+    new Date().toLocaleString("en-US", { timeZone: userTimezone })
+  );
+  startDate.setDate(1); // Set to the first day of the month
+
+  const endDate = new Date(startDate);
+  endDate.setMonth(endDate.getMonth() + 1); // Move to the first day of the next month
+  endDate.setDate(1); // Set to the first day of the next month
 
   const { data, error } = await supabase
     .from("userPlans")
     .select("schedules(*)")
     .eq("userId", userId)
-    .filter(
-      "schedules.date",
-      "gt",
-      new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
-    )
-    .filter(
-      "schedules.date",
-      "lte",
-      new Date(
-        new Date().getFullYear(),
-        new Date().getMonth() + 1,
-        1
-      ).toISOString()
-    )
+    .filter("schedules.date", "gte", startDate.toISOString())
+    .filter("schedules.date", "lt", endDate.toISOString()) // Use 'lt' for exclusive end date
     .order("date", { ascending: true, referencedTable: "schedules" });
 
   if (error) {
