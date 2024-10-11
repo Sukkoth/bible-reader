@@ -27,21 +27,26 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { GET_PLAN_SCHEDULE } from "@/utils/supabase/services";
+import { GET_PLAN_SCHEDULE, GET_USER } from "@/utils/supabase/services";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 async function Plan({ params }: { params: { planId: string } }) {
-  const plan = (await GET_PLAN_SCHEDULE(parseInt(params.planId))) as UserPlan;
+  const { user } = await GET_USER();
+  const plan = await GET_PLAN_SCHEDULE(parseInt(params.planId));
 
-  if (!plan) {
+  if (!plan || user!.id !== plan.userId) {
     return (
-      <>
+      <div>
         <BackButton />
-        <div className='flex flex-col items-center justify-center h-screen'>
-          <h1 className='text-3xl font-bold mb-4'>No plan found</h1>
-        </div>
-      </>
+        <Alert className='mt-5 shadow-md'>
+          <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />
+          <AlertTitle className='font-bold'>Access Denied</AlertTitle>
+          <AlertDescription>
+            You do not have permission to view this content.
+          </AlertDescription>
+        </Alert>
+      </div>
     );
   }
 

@@ -197,6 +197,7 @@ export async function CREATE_PLAN_SCHEDULE(
 }
 
 export async function GET_PLAN_SCHEDULE(scheduleId: number) {
+  if (!scheduleId) return;
   const supabase = createClient();
 
   const { data, error } = await supabase
