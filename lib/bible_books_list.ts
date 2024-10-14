@@ -347,7 +347,7 @@ export const categorizedBooks: CategorizedBooks = {
     { book: "Numbers", verses: 1288, chapters: 36 },
     { book: "Deuteronomy", verses: 959, chapters: 34 },
   ],
-  "Historical Books": [
+  "Old Testament Historical Books": [
     { book: "Joshua", verses: 658, chapters: 24 },
     { book: "Judges", verses: 618, chapters: 21 },
     { book: "Ruth", verses: 85, chapters: 4 },
@@ -394,7 +394,9 @@ export const categorizedBooks: CategorizedBooks = {
     { book: "Luke", verses: 1151, chapters: 24 },
     { book: "John", verses: 879, chapters: 21 },
   ],
-  History: [{ book: "Acts", verses: 1007, chapters: 28 }],
+  "New Testament Historical Books": [
+    { book: "Acts", verses: 1007, chapters: 28 },
+  ],
   "Pauline Epistles": [
     { book: "Romans", verses: 433, chapters: 16 },
     { book: "1 Corinthians", verses: 437, chapters: 16 },

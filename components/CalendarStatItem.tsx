@@ -6,12 +6,12 @@ import "react-circular-progressbar/dist/styles.css";
 
 type Props = {
   text?: number | string;
-  type: "chapters" | "pages" | string;
   target: number;
   progress: number;
   rangeColor?: boolean;
   strokeWidth?: number;
   children?: ReactNode;
+  startWithRed?: boolean; //when you want to show today as red since it's on trial and also the past dates
 };
 function CalendarStatItem({
   target,
@@ -20,6 +20,7 @@ function CalendarStatItem({
   rangeColor,
   strokeWidth = 5,
   children,
+  startWithRed,
 }: Props) {
   const percentage = Math.round((progress / target) * 100) || 0;
   let pathColor = "";
@@ -27,15 +28,23 @@ function CalendarStatItem({
 
   if (rangeColor) {
     if (percentage > 90) {
-      pathColor = "hsl(120, 100%, 40%)";
+      // Vibrant green for almost fully completed
+      pathColor = "hsl(120, 70%, 40%)";
     } else if (percentage > 75) {
-      pathColor = "hsl(60, 100%, 50%)";
+      // Green-yellow for good progress
+      pathColor = "hsl(90, 70%, 50%)";
     } else if (percentage > 50) {
-      pathColor = "hsl(30, 100%, 50%)";
-    } else if (percentage > 25) {
-      pathColor = "hsl(0, 100%, 50%)";
+      // Bright orange for moderate progress
+      pathColor = "hsl(30, 90%, 55%)";
+    } else if (startWithRed && percentage > 25) {
+      // Clear orange for some progress after start
+      pathColor = "hsl(30, 55%, 55%)";
+    } else if (startWithRed && percentage <= 25) {
+      // Bold, saturated red for barely started tasks
+      pathColor = "hsl(0, 85%, 50%)";
     } else {
-      pathColor = "hsl(0, 0.8928571428571397%, 56.07843137254902%)";
+      // Neutral grey for not started tasks
+      pathColor = "hsl(0, 0%, 65%)";
     }
     strokeColor = pathColor.replace(")", ", 0.2)"); //add opacity to the pathColor to get stroke color
   } else {

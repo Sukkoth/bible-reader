@@ -1,8 +1,7 @@
 import { PushSubscription } from "web-push";
 
 declare global {
-  declare type ScheduleStatus = "PENDING" | "COMPLETE";
-  declare type PlanType = "BOOK" | "BIBLE";
+  declare type ScheduleStatus = "PENDING" | "COMPLETED";
 
   interface Notification {
     allowed: boolean;
@@ -38,7 +37,7 @@ declare global {
   interface ScheduleItem {
     goal: string;
     notes: string;
-    status: "PENDING" | "COMPLETED";
+    status: ScheduleStatus;
     completedAt?: string;
   }
 
@@ -61,8 +60,12 @@ declare global {
     totalChapters: number;
     totalBooks: number;
     perDay: number;
+    userMade: boolean;
+    customizable: boolean;
     plans: Plan;
   }
+
+  type TemplateType = "PORTION" | "CHAPTER";
 
   interface Template {
     id: number;
@@ -70,10 +73,13 @@ declare global {
     chaptersCount: number;
     planId: number;
     showTime: boolean;
+    templateType: TemplateType;
     schedules: {
-      items: string[];
+      items: string[][];
       perDay: number;
       listType: string;
+      customizable: boolean;
+      userMade: boolean;
     };
     created_at: Date;
     updated_at: Date;

@@ -4,13 +4,13 @@ import { GET_TEMPLATES } from "@/utils/supabase/services";
 import ListTemplates from "@/components/plans/ListTemplates";
 
 async function CreatePlan() {
-  const templates = await GET_TEMPLATES();
+  const templates = await GET_TEMPLATES({ userMade: true });
   return (
     <div>
       <BackButton />
       <div className='text-sm border p-3 rounded-md mt-5 text-stone-500 dark:text-stone-300 flex gap-8 items-center'>
         <div className='text-2xl animate-pulse text-primary'>
-        <Siren />
+          <Siren />
         </div>
         <p>
           <strong className='text-primary'>Create a plan</strong> of your own or

@@ -145,6 +145,8 @@ export type CreatePlanSchedule = {
   totalBooks: number;
   perDay: number;
   type?: string;
+  userMade: boolean;
+  customizable: boolean;
   schedules: {
     date: string;
     items: {
@@ -270,18 +272,38 @@ export async function GET_TODAYS_PLANS(userId: string) {
 }
 
 //* TEMPLATES
-export async function GET_TEMPLATES() {
+type GetTemplateProps =
+  | {
+      userMade: boolean;
+    }
+  | undefined;
+export async function GET_TEMPLATES(args: GetTemplateProps) {
   const supabase = createClient();
 
   const { data, error } = await supabase
     .from("templates")
-    .select("*, plans(*)");
+    .select("*, plans(*)")
+    .eq("schedules -> userMade", args?.userMade ?? true);
 
   if (error) {
     throw new Error(error.message || "Something went wrong");
   }
 
   return data;
+}
+
+export async function GET_TEMPLATE(templateId: number) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("templates")
+    .select("*, plans(*)")
+    .eq("id", templateId)
+    .single();
+  if (error) {
+    throw new Error(error.message || "Something went wrong");
+  }
+
+  return data as Template;
 }
 
 export async function GET_CURRENT_MONTH_DAILY_PROGRESS(

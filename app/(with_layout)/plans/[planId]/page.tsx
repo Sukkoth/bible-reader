@@ -30,9 +30,10 @@ import {
 import { GET_PLAN_SCHEDULE, GET_USER } from "@/utils/supabase/services";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { cn } from "@/lib/utils";
 
 async function Plan({ params }: { params: { planId: string } }) {
-  const { user } = await GET_USER();
+  const { user } = await GET_USER().catch();
   const plan = await GET_PLAN_SCHEDULE(parseInt(params.planId));
 
   if (!plan || user!.id !== plan.userId) {
@@ -71,16 +72,6 @@ async function Plan({ params }: { params: { planId: string } }) {
       subText: format(plan.endDate, "MMM d,y"),
     },
     {
-      icon: <BookOpenText className='size-5' />,
-      header: "Per Session",
-      subText: `${plan.perDay}`,
-    },
-    {
-      icon: <CalendarDays className='size-5' />,
-      header: "Per Week",
-      subText: `${plan.perDay * 7} Sessions `,
-    },
-    {
       icon: <CheckCheck className='size-5' />,
       header: "Completed",
       subText: `${completedPercent}%`,
@@ -92,8 +83,25 @@ async function Plan({ params }: { params: { planId: string } }) {
     },
   ];
 
+  if (plan.userMade) {
+    planDetail.push(
+      ...[
+        {
+          icon: <BookOpenText className='size-5' />,
+          header: "Per Session",
+          subText: `${plan.perDay}`,
+        },
+        {
+          icon: <CalendarDays className='size-5' />,
+          header: "Per Week",
+          subText: `${plan.perDay * 7} Sessions `,
+        },
+      ]
+    );
+  }
+
   return (
-    <div className=''>
+    <div>
       <BackButton />
       <div className='pt-5'>
         <h1 className='text-2xl xs:text-3xl'>{plan.plans.name}</h1>
@@ -104,15 +112,18 @@ async function Plan({ params }: { params: { planId: string } }) {
             <CalendarStatItem
               target={target}
               progress={progress}
-              type='bible'
               strokeWidth={10}
             >
               <h1 className='text-3xl font-bold'>{`${completedPercent}%`}</h1>
             </CalendarStatItem>
           </div>
         </CardHeader>
-        <CardContent className='overflow-hidden px-3 sm:px-6 w-fit'>
-          <div className='grid grid-cols-1 xxs:grid-cols-2 xs:grid-cols-3 gap-2 mx-auto'>
+        <CardContent className='overflow-hidden px-3 sm:px-6 w-full'>
+          <div
+            className={cn("grid grid-cols-1 xxs:grid-cols-2 gap-2", {
+              "xs:grid-cols-3": plan.userMade,
+            })}
+          >
             {planDetail.map((detail) => (
               <PlanDetailItem {...detail} key={detail.header} />
             ))}
@@ -127,9 +138,9 @@ async function Plan({ params }: { params: { planId: string } }) {
               </AlertDescription>
             </Alert>
           )}
-          <PlanCalendarView schedules={plan} />
+          <PlanCalendarView {...{ plan }} />{" "}
+          {/* you could have mane plan={plan} WHY? just to confuse myself :) */}
           <Separator className='my-5' />
-
           <AlertDialog>
             <AlertDialogTrigger className='w-full'>
               <div className='w-full bg-destructive h-12 rounded-md px-8 flex items-center justify-center text-sm hover:bg-destructive/90 text-white'>

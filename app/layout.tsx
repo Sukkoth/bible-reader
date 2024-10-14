@@ -36,6 +36,7 @@ export const metadata: Metadata = {
 const spaceFont = Space_Mono({
   weight: ["400", "700"],
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const viewport = {

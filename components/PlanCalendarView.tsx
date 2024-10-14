@@ -16,36 +16,49 @@ import {
   isPast,
   isSameDay,
 } from "date-fns";
-import { useEffect, useState } from "react";
-import { CalendarDays } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { CalendarDays, Loader2 } from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { updateScheduleItemStatus } from "@/app/(with_layout)/plans/[planId]/_actions";
 
 type Props = {
-  schedules: UserPlan;
+  plan: UserPlan;
 };
-export default function PlanCalendarView({ schedules }: Props) {
+export default function PlanCalendarView({ plan }: Props) {
   const today = new Date();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(
-    isBefore(today, schedules.startDate)
+    isBefore(today, plan.startDate)
       ? 0
-      : isPast(schedules.endDate)
-      ? schedules.schedules.length - 1
-      : differenceInCalendarDays(today, schedules.startDate)
+      : isPast(plan.endDate)
+      ? plan.schedules.length - 1
+      : differenceInCalendarDays(today, plan.startDate)
   );
   const [selectedDate, setSelectedDate] = useState(current);
+  const [isUpdatingScheduleItem, startUpdatingScheduleItem] = useTransition();
+  const [updatingIndex, setUpdatingIndex] = useState<{
+    scheduleId: string; //to prevent other schedule indexes from following the loading
+    index: number; //the get the exact item
+  } | null>(null);
 
   async function onChangeGoalStatus(
     scheduleId: string,
     goalIndex: number,
     checked: boolean
   ) {
-    const items = schedules.schedules[selectedDate];
+    const items = plan.schedules[selectedDate];
     items.items[goalIndex].status = checked ? "COMPLETED" : "PENDING";
-    await updateScheduleItemStatus({ scheduleId, items });
+    setUpdatingIndex({
+      scheduleId: scheduleId,
+      index: goalIndex,
+    });
+    startUpdatingScheduleItem(async () => {
+      await updateScheduleItemStatus({ scheduleId, items });
+      //write a sleep mock using timeout
+      setUpdatingIndex(null);
+    });
   }
 
   useEffect(() => {
@@ -75,17 +88,17 @@ export default function PlanCalendarView({ schedules }: Props) {
         }}
         setApi={setApi}
       >
-        {isBefore(today, schedules.startDate) && (
+        {isBefore(today, plan.startDate) && (
           <div className='border px-2 py-3 mb-8 rounded-sm mt-3 text-sm flex items-center gap-2'>
             <span className='w-1/4 text-center text-xl'>⚠️</span>{" "}
             <span>
               This plan is yet to start, take a look at it but you will start it
-              on {format(schedules.startDate, "dd/MM/Y")}
+              on {format(plan.startDate, "dd/MM/Y")}
             </span>
           </div>
         )}
         <CarouselContent className='ml-1 w-[150px] xs:w-[280px]'>
-          {schedules.schedules.map((schedule, index) => {
+          {plan.schedules.map((schedule, index) => {
             const parsedDate = schedule.date;
             return (
               <CarouselItem
@@ -125,14 +138,19 @@ export default function PlanCalendarView({ schedules }: Props) {
       </Carousel>
       <Separator className='my-5' />
       <div className='space-y-2'>
-        {schedules.schedules[selectedDate] &&
-          schedules.schedules[selectedDate].items.map((item, index) => (
+        {plan.schedules[selectedDate] &&
+          plan.schedules[selectedDate].items.map((item, index) => (
             <CalendarViewItem
               key={item.goal}
-              scheduleId={schedules.schedules[selectedDate].id}
+              scheduleId={plan.schedules[selectedDate].id}
               index={index}
               item={item}
               onChange={onChangeGoalStatus}
+              isUpdating={
+                isUpdatingScheduleItem &&
+                updatingIndex?.index === index &&
+                updatingIndex?.scheduleId === plan.schedules[selectedDate].id //this part prevents items on the left and right dates with the same index, to show loading status
+              }
             />
           ))}
       </div>
@@ -145,22 +163,28 @@ function CalendarViewItem({
   onChange,
   scheduleId,
   index,
+  isUpdating,
 }: {
   item: ScheduleItem;
   index: number;
   scheduleId: string;
   onChange: (scheduleId: string, goalIndex: number, checked: boolean) => void;
+  isUpdating: boolean;
 }) {
   return (
     <div className='flex gap-2 items-center'>
-      <Checkbox
-        id={item.goal}
-        className='checked:bg-secondary'
-        defaultChecked={item.status === "COMPLETED"}
-        onCheckedChange={(checked) =>
-          onChange(scheduleId, index, Boolean(checked))
-        }
-      />
+      {isUpdating ? (
+        <Loader2 className='animate-spin size-4' />
+      ) : (
+        <Checkbox
+          id={item.goal}
+          className='checked:bg-secondary'
+          defaultChecked={item.status === "COMPLETED"}
+          onCheckedChange={(checked) =>
+            onChange(scheduleId, index, Boolean(checked))
+          }
+        />
+      )}
       <Label htmlFor={item.goal} className='text-sm'>
         {item.goal}
       </Label>

@@ -1,3 +1,4 @@
+import { addDays, isPast } from "date-fns";
 import CalendarStatItem from "./CalendarStatItem";
 import * as DATE_UTILS from "@/utils/date-utils";
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 function DailyStats({ mapped }: Props) {
+  const today = new Date();
   return Array.from(
     { length: DATE_UTILS.getDaysInCurrentMonth() },
     (_, index) => {
@@ -23,10 +25,10 @@ function DailyStats({ mapped }: Props) {
         <CalendarStatItem
           target={target}
           progress={progress}
-          type='h'
           text={index + 1}
           key={index}
           rangeColor
+          startWithRed={today.getDate() > index}
         />
       );
     }

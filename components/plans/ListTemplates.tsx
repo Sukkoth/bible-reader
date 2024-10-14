@@ -38,20 +38,16 @@ function ListTemplates({ templates }: { templates: Template[] }) {
 
           <div>
             {templates?.map((template) => {
-              // if template is ALL_IN_ONE
-              const queryParam = `${template.plans.id}?type=${
-                template.schedules.listType
-              }&perDay=${template.schedules.perDay || 1}&books=${JSON.stringify(
-                template.schedules.items
-              )}`;
-
+              const queryParam = `${template.planId}?template=${template.id}`;
               return (
                 <NewPlanItem
                   queryParam={queryParam}
                   title={template.plans.name}
                   description={template.plans.description}
                   quantifier={`${template.schedules.perDay}`}
-                  duration={template.plans.suggestedDuration}
+                  duration={Math.ceil(
+                    template.chaptersCount / template.schedules.perDay
+                  )}
                   key={template.id}
                   img={template.plans.coverImg}
                 />

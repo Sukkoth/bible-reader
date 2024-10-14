@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Separator } from "./ui/separator";
-import { AlarmClock, BookMarked } from "lucide-react";
+import { AlarmClock, BookMarked, LucidePanelLeftOpen } from "lucide-react";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 type Props = {
   duration: number;
@@ -10,6 +11,8 @@ type Props = {
   quantifier: string;
   queryParam?: string;
   img?: string | null;
+  userMade?: boolean;
+  customizable?: boolean;
 };
 function NewPlanItem({
   duration,
@@ -18,6 +21,8 @@ function NewPlanItem({
   quantifier,
   queryParam,
   img,
+  userMade = true,
+  customizable,
 }: Props) {
   return (
     <Link
@@ -26,10 +31,7 @@ function NewPlanItem({
     >
       <div className='h-28 relative me-5 border w-28'>
         <Image
-          src={
-            img ||
-            `https://hips.hearstapps.com/hmg-prod/images/an-open-bible-royalty-free-image-1681152546.jpg?resize=1200:*`
-          }
+          src={img || `/plans-fallback-image.png`}
           alt='plan-img'
           fill
           className='absolute object-cover'
@@ -46,13 +48,27 @@ function NewPlanItem({
               <p className='text-xs text-center'> {duration} days</p>
             </div>
             <Separator orientation='vertical' className='h-[1rem]' />
-            <div className='text-xs flex items-center gap-2'>
-              <BookMarked className='size-5' />
-              <p className='text-xs text-center'>
-                {" "}
-                {quantifier} session{parseInt(quantifier) > 1 ? "s" : ""}/day
-              </p>
-            </div>
+            {userMade ? (
+              <div className='text-xs flex items-center gap-2'>
+                <BookMarked className='size-5' />
+                <p className='text-xs text-center'>
+                  {" "}
+                  {quantifier} session{parseInt(quantifier) > 1 ? "s" : ""}/day
+                </p>
+              </div>
+            ) : (
+              <div
+                className={cn("text-xs flex items-center gap-2", {
+                  "text-red-500": !customizable,
+                })}
+              >
+                <LucidePanelLeftOpen className='size-5' />
+                <p className='text-xs text-center'>
+                  {" "}
+                  {customizable ? "Customizable" : "Fixed"}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

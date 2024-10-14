@@ -35,7 +35,7 @@ function PlansItem({
       </div>
       <div className='flex items-center justify-between w-full pe-5'>
         <div>
-          <h3 className='text-xs xs:text-lg'>{text}</h3>
+          <h3 className='text-xs xs:text-[16px]'>{text}</h3>
           <p className='text-xs text-stone-400 pt-1'>{subText}</p>
         </div>
         <div className='rounded-lg p-1 hidden xxs:block'>

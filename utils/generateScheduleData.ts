@@ -12,7 +12,7 @@ type ArgProps = {
   totalChapters: number;
 };
 
-export function GenerateScheduleDataForDb({
+export function forUserMade({
   selectedBooks: selected,
   chapterCount,
   startDate,
@@ -62,7 +62,93 @@ export function GenerateScheduleDataForDb({
     totalBooks,
     totalChapters,
     perDay: chapterCount,
+    userMade: true,
+    customizable: true,
   };
 
   return finalDataToInsert;
+}
+
+// * plan that CAN be customized
+export function forCustomized(
+  planItemsData: string[][],
+  {
+    chapterCount,
+    startDate,
+    endDate,
+    planId,
+    totalBooks,
+    totalChapters,
+  }: ArgProps
+) {
+  const planItems = planItemsData.flat(1);
+  const perSession = chapterCount;
+
+  console.log(
+    "Generating schedule for CUSTOMIZED plan! ",
+    Math.ceil(planItems.length / perSession),
+    " days"
+  );
+  const plan = [];
+  let currentDate = startDate;
+
+  for (let i = 0; i < planItems.length; i += perSession) {
+    plan.push({
+      date: format(currentDate, "yyyy-MM-dd"),
+      items: planItems.slice(i, i + perSession).map((plan) => {
+        return {
+          goal: plan,
+          status: "PENDING",
+          notes: "",
+        };
+      }),
+    });
+    currentDate = addDays(currentDate, 1);
+  }
+  return {
+    planId,
+    startDate,
+    endDate,
+    totalBooks,
+    totalChapters,
+    perSession,
+    userMade: false,
+    customizable: true,
+    schedules: plan,
+  };
+}
+
+// * plan that CANNOT be customized
+export function forUnCustomized(
+  planItems: string[][],
+  { startDate, endDate, planId, totalBooks, totalChapters }: ArgProps
+) {
+  console.log(
+    "Generating schedule for uncustomized plan! ",
+    planItems.length,
+    " days"
+  );
+  const currentDate = startDate;
+  return {
+    planId,
+    startDate,
+    endDate,
+    totalBooks,
+    totalChapters,
+    userMade: false,
+    customizable: false,
+    schedules: planItems.map((plans, i) => {
+      return {
+        userPlanId: 1,
+        date: format(addDays(currentDate, i), "yyyy-MM-dd"),
+        items: plans.map((plan) => {
+          return {
+            goal: plan,
+            status: "PENDING",
+            notes: "",
+          };
+        }),
+      };
+    }),
+  };
 }
