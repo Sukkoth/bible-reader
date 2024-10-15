@@ -1,5 +1,6 @@
 import CreatePlanSchedule from "@/components/schedule/CreatePlanSchedule";
 import { GET_TEMPLATE } from "@/utils/supabase/services";
+import { notFound } from "next/navigation";
 
 type Props = {
   searchParams: { template?: string };
@@ -12,22 +13,13 @@ async function Page({ searchParams }: Props) {
 
   if (searchParams.template) {
     const parsedTemplateId = parseInt(searchParams.template);
-    if (!parsedTemplateId) {
-      return (
-        <div>
-          <h1>404! No such page</h1>
-        </div>
-      );
+    if (parsedTemplateId) {
+      template = await GET_TEMPLATE(parseInt(searchParams.template));
     }
-    template = await GET_TEMPLATE(parseInt(searchParams.template));
   }
 
   if (!template) {
-    return (
-      <div>
-        <h1>404! No such page</h1>
-      </div>
-    );
+    return notFound();
   }
 
   const props = {

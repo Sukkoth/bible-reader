@@ -16,39 +16,19 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { GET_PLAN_SCHEDULE, GET_USER } from "@/utils/supabase/services";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
+import DeleteSchedule from "@/components/DeleteSchedule";
+import { notFound } from "next/navigation";
 
 async function Plan({ params }: { params: { planId: string } }) {
   const { user } = await GET_USER().catch();
   const plan = await GET_PLAN_SCHEDULE(parseInt(params.planId));
 
   if (!plan || user!.id !== plan.userId) {
-    return (
-      <div>
-        <BackButton />
-        <Alert className='mt-5 shadow-md'>
-          <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />
-          <AlertTitle className='font-bold'>Access Denied</AlertTitle>
-          <AlertDescription>
-            You do not have permission to view this content.
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
+    return notFound();
   }
 
   const target = plan.totalChapters;
@@ -141,29 +121,7 @@ async function Plan({ params }: { params: { planId: string } }) {
           <PlanCalendarView {...{ plan }} />{" "}
           {/* you could have mane plan={plan} WHY? just to confuse myself :) */}
           <Separator className='my-5' />
-          <AlertDialog>
-            <AlertDialogTrigger className='w-full'>
-              <div className='w-full bg-destructive h-12 rounded-md px-8 flex items-center justify-center text-sm hover:bg-destructive/90 text-white'>
-                Delete Plan
-              </div>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  By continuing, you delete your{" "}
-                  <strong className='text-red-500'>plan</strong> and it&apos;s
-                  <strong className='text-red-500'> progress</strong>
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction className='bg-destructive hover:bg-destructive/90'>
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DeleteSchedule userPlanId={plan.id} />
         </CardContent>
       </Card>
     </div>

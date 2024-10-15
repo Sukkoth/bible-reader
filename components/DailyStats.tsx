@@ -1,4 +1,3 @@
-import { addDays, isPast } from "date-fns";
 import CalendarStatItem from "./CalendarStatItem";
 import * as DATE_UTILS from "@/utils/date-utils";
 
@@ -28,7 +27,7 @@ function DailyStats({ mapped }: Props) {
           text={index + 1}
           key={index}
           rangeColor
-          startWithRed={today.getDate() > index}
+          startWithRed={target > 0 && today.getDate() > index}
         />
       );
     }

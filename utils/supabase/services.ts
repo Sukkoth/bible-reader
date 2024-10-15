@@ -210,7 +210,11 @@ export async function GET_PLAN_SCHEDULE(scheduleId: number) {
     .single();
 
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    if (error.code === "PGRST116") {
+      return null;
+    } else {
+      throw new Error(error.message || "Something went wrong");
+    }
   }
   return data as UserPlan;
 }
@@ -335,4 +339,14 @@ export async function GET_CURRENT_MONTH_DAILY_PROGRESS(
   }
 
   return data as { schedules: Schedule[] }[];
+}
+
+export async function DELETE_USER_PLAN(userPlanId: number) {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("userPlans")
+    .delete()
+    .eq("id", userPlanId);
+
+  return { error };
 }

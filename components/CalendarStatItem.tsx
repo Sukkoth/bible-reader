@@ -46,7 +46,10 @@ function CalendarStatItem({
       // Neutral grey for not started tasks
       pathColor = "hsl(0, 0%, 65%)";
     }
-    strokeColor = pathColor.replace(")", ", 0.2)"); //add opacity to the pathColor to get stroke color
+    strokeColor =
+      startWithRed && percentage < 25
+        ? pathColor.replace(")", ", 0.4)")
+        : pathColor.replace(")", ", 0.2)"); //add opacity to the pathColor to get stroke color
   } else {
     pathColor = "hsl(var(--primary))";
     strokeColor = "hsl(var(--primary-foreground))";

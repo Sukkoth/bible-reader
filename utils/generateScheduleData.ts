@@ -84,11 +84,6 @@ export function forCustomized(
   const planItems = planItemsData.flat(1);
   const perSession = chapterCount;
 
-  console.log(
-    "Generating schedule for CUSTOMIZED plan! ",
-    Math.ceil(planItems.length / perSession),
-    " days"
-  );
   const plan = [];
   let currentDate = startDate;
 
@@ -123,11 +118,6 @@ export function forUnCustomized(
   planItems: string[][],
   { startDate, endDate, planId, totalBooks, totalChapters }: ArgProps
 ) {
-  console.log(
-    "Generating schedule for uncustomized plan! ",
-    planItems.length,
-    " days"
-  );
   const currentDate = startDate;
   return {
     planId,

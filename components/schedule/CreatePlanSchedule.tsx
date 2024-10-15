@@ -38,7 +38,6 @@ import * as GeneratePlanSchedule from "@/utils/generateScheduleData";
 import { useParams, useRouter } from "next/navigation";
 import useFetch from "@/hooks/useFetch";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "../ui/separator";
 
 type Props = {
   showBooks: boolean;
@@ -54,10 +53,7 @@ function CreatePlanSchedule(args: Props) {
   const router = useRouter();
 
   const { planId } = useParams();
-  const selectionRef = useRef<string[]>(
-    // JSON.parse(searchParams.get("books") || "[]")
-    args.books || []
-  ); //to not re-render expensive list of bible books
+  const selectionRef = useRef<string[]>(args.books || []); //to not re-render expensive list of bible books
   const [selected, setSelected] = useState<string[]>([]);
   const [showTime, setShowTime] = useState(!args.showBooks);
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
@@ -92,12 +88,6 @@ function CreatePlanSchedule(args: Props) {
 
   //whenever chapter count and startDay change, push back the end date
   useEffect(() => {
-    console.log(
-      "LENGTH",
-      args.selected.flat(1).length / chapterCount,
-      args.customizable,
-      args.userMade
-    );
     if (startDate)
       setEndDate(
         addDays(
@@ -109,6 +99,7 @@ function CreatePlanSchedule(args: Props) {
             : args.selected.length
         )
       );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterCount, startDate]);
 
   //ro redirect when the data is created
@@ -116,6 +107,7 @@ function CreatePlanSchedule(args: Props) {
     if (handleAddPlanToDb?.data?.plan?.id) {
       router.replace(`/plans/${handleAddPlanToDb?.data?.plan?.id}`);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleAddPlanToDb.data]);
 
   async function handleGenerateData() {
@@ -154,14 +146,6 @@ function CreatePlanSchedule(args: Props) {
           totalChapters: args.template.chaptersCount,
         });
       }
-
-      //for customizable popular plans
-      //type here
-      //for non-customizable popular plans
-      //type here
-
-      // console.log(parsedData);
-
       await handleAddPlanToDb.fetchData({
         body: JSON.stringify(parsedData),
         method: "post",
@@ -170,7 +154,7 @@ function CreatePlanSchedule(args: Props) {
   }
 
   return (
-    <div className=''>
+    <div>
       <BackButton
         onClick={
           args.showBooks && showTime ? () => setShowTime(false) : undefined
@@ -274,11 +258,6 @@ function CreatePlanSchedule(args: Props) {
                   subText={`${args.template.chaptersCount}`}
                   icon={<NotebookText size={20} />}
                 />
-                {/* <PlanDetailItem
-                  header='Verses'
-                  subText={`${totalBooks.verses}`}
-                  icon={<BookOpenText size={20} />}
-                /> */}
               </div>
             )}
             <Card className='mt-10 px-2 '>
@@ -388,7 +367,6 @@ function CreatePlanSchedule(args: Props) {
                       header='Starts'
                       subText={`${format(startDate, "MMM d,y")}`}
                       icon={<Send size={20} />}
-                      // icon={<BookMarked size={20} />}
                     />
                   )}
                   {endDate && (
@@ -396,7 +374,6 @@ function CreatePlanSchedule(args: Props) {
                       header='Ends'
                       subText={`${format(endDate, "MMM d,y")}`}
                       icon={<Hourglass size={20} />}
-                      // icon={<BookMarked size={20} />}
                     />
                   )}
                 </div>
