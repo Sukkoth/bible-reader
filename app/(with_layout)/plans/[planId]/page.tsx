@@ -22,6 +22,7 @@ import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
 import DeleteSchedule from "@/components/DeleteSchedule";
 import { notFound } from "next/navigation";
+import Confetti from "@/components/Confetti";
 
 async function Plan({ params }: { params: { planId: string } }) {
   const { user } = await GET_USER().catch();
@@ -96,6 +97,11 @@ async function Plan({ params }: { params: { planId: string } }) {
             >
               <h1 className='text-3xl font-bold'>{`${completedPercent}%`}</h1>
             </CalendarStatItem>
+            <Confetti
+              planId={plan.id.toString()}
+              progress={progress}
+              target={target}
+            />
           </div>
         </CardHeader>
         <CardContent className='overflow-hidden px-3 sm:px-6 w-full'>

@@ -50,7 +50,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${spaceFont.className} antialiased h-[100dvh]`}>
+      <body
+        className={`${spaceFont.className} antialiased h-[100dvh] overflow-x-hidden`}
+      >
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
