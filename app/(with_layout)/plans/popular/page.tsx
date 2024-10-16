@@ -22,7 +22,7 @@ async function PopularPlans() {
           deepen your understanding of the Bible.
         </p>
 
-        <div>
+        <div className='mt-5'>
           {templates?.map((template: Template) => {
             const queryParam = `${template.planId}?template=${template.id}`;
             return (
@@ -33,9 +33,7 @@ async function PopularPlans() {
                 title={template.plans.name}
                 description={template.plans.description}
                 quantifier={`${template.schedules.perDay}`}
-                duration={Math.ceil(
-                  template.chaptersCount / template.schedules.perDay
-                )}
+                duration={template.schedules.items.length}
                 key={template.id}
                 img={template.plans.coverImg}
               />
