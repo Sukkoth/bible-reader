@@ -14,12 +14,20 @@ function DeleteSchedule({ userPlanId }: Props) {
   const router = useRouter();
   async function handleDeleteSchedule() {
     if (userPlanId) {
-      const { status } = await deleteUserPlan(userPlanId);
-      if (status === 200) {
+      const res = await deleteUserPlan(userPlanId);
+      if (res?.status === 200) {
         toast({
+          title: "Success!",
           description: "Plan Schedule removed!",
         });
         router.replace("/plans");
+      } else {
+        toast({
+          title: "Failed to delete",
+          description: res?.message || "Could not delete the schedule",
+          variant: "destructive",
+          duration: 3000,
+        });
       }
     }
   }
