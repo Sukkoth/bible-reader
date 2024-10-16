@@ -22,6 +22,7 @@ import { Separator } from "./ui/separator";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { updateScheduleItemStatus } from "@/app/(with_layout)/plans/[planId]/_actions";
+import { toast } from "@/hooks/use-toast";
 
 type Props = {
   plan: UserPlan;
@@ -48,16 +49,23 @@ export default function PlanCalendarView({ plan }: Props) {
     goalIndex: number,
     checked: boolean
   ) {
-    const items = plan.schedules[selectedDate];
-    items.items[goalIndex].status = checked ? "COMPLETED" : "PENDING";
+    const schedule = plan.schedules[selectedDate];
+    schedule.items[goalIndex].status = checked ? "COMPLETED" : "PENDING";
     setUpdatingIndex({
       scheduleId: scheduleId,
       index: goalIndex,
     });
     startUpdatingScheduleItem(async () => {
-      await updateScheduleItemStatus({ scheduleId, items });
-      //write a sleep mock using timeout
+      await updateScheduleItemStatus({ scheduleId, items: schedule });
       setUpdatingIndex(null);
+      const pendingItems = schedule.items?.filter(
+        (goal) => goal.status === "PENDING"
+      );
+      if (pendingItems?.length === 0) {
+        toast({
+          description: "Todays plan complete",
+        });
+      }
     });
   }
 
