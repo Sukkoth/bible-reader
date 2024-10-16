@@ -1,7 +1,7 @@
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import type { Metadata } from "next";
-import { Space_Mono } from "next/font/google";
 import "./globals.css";
+import { spaceFont } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: "Bible Reader",
@@ -32,12 +32,6 @@ export const metadata: Metadata = {
     { rel: "icon", url: "/pwa-192x192.png" },
   ],
 };
-
-const spaceFont = Space_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const viewport = {
   themeColor: "#171717",

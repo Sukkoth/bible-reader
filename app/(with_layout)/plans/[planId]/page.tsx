@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import DeleteSchedule from "@/components/DeleteSchedule";
 import { notFound } from "next/navigation";
 import Confetti from "@/components/Confetti";
+import { spartanFont } from "@/lib/fonts";
 
 async function Plan({ params }: { params: { planId: string } }) {
   const { user } = await GET_USER().catch();
@@ -85,7 +86,9 @@ async function Plan({ params }: { params: { planId: string } }) {
     <div>
       <BackButton />
       <div className='pt-5'>
-        <h1 className='text-2xl xs:text-3xl'>{plan.plans.name}</h1>
+        <h1 className={`text-2xl xs:text-4xl ${spartanFont.className}`}>
+          {plan.plans.name}
+        </h1>
       </div>
       <Card className='flex items-center flex-col mt-10 gap-3 sm:w-auto border'>
         <CardHeader>
