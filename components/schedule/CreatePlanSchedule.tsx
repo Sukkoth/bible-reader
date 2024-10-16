@@ -60,10 +60,9 @@ function CreatePlanSchedule(args: Props) {
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [chapterCount, setChapterCount] = useState(args.perDay);
 
-  // const handleAddPlanToDb = useCreatePlanSchedule();
   const handleAddPlanToDb = useFetch<{ plan: UserPlan }>(
     `/api/plans/schedule/${planId}`,
-    false
+    false //prevent fetch on initial
   );
 
   function handleSelected() {
@@ -161,11 +160,31 @@ function CreatePlanSchedule(args: Props) {
         }
       />
       <div className='pt-5'>
-        <h1 className='text-2xl xs:text-3xl'>Create Schedule</h1>
-        <p className='text-sm'>* Select Books to read </p>
-        <p className='text-sm'>
-          * Books are added to list according to select order
-        </p>
+        <h1 className='text-2xl xs:text-3xl mb-5'>Create Schedule</h1>
+        {!showTime ? (
+          <>
+            <p className='text-sm'>
+              * Books are added to list according to select order
+            </p>
+            <p className='text-sm'>* Select Books to read </p>
+          </>
+        ) : args?.template ? (
+          <div className='text-sm'>
+            <p>
+              <strong>Name</strong>: {args.template.plans.name}
+            </p>
+            <p>
+              <strong>Description</strong>: {args.template.plans.description}
+            </p>
+          </div>
+        ) : (
+          <>
+            <p className='text-sm'>
+              * Choose your schedule * These schedules are meant to be followed
+              everyday
+            </p>
+          </>
+        )}
         {handleAddPlanToDb.error?.message && (
           <p className='text-sm pb-1 text-red-400'>
             {handleAddPlanToDb.error?.message}

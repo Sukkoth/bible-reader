@@ -56,8 +56,8 @@ export function forUserMade({
 
   const finalDataToInsert: CreatePlanSchedule = {
     planId: parseInt(planId!),
-    startDate: startDate!,
-    endDate: endDate!,
+    startDate: format(startDate!, "yyyy-MM-dd"),
+    endDate: format(endDate!, "yyyy-MM-dd"),
     schedules: plan,
     totalBooks,
     totalChapters,
@@ -102,8 +102,8 @@ export function forCustomized(
   }
   return {
     planId,
-    startDate,
-    endDate,
+    startDate: format(startDate!, "yyyy-MM-dd"),
+    endDate: format(endDate!, "yyyy-MM-dd"),
     totalBooks,
     totalChapters,
     perSession,
@@ -121,8 +121,8 @@ export function forUnCustomized(
   const currentDate = startDate;
   return {
     planId,
-    startDate,
-    endDate,
+    startDate: format(startDate!, "yyyy-MM-dd"),
+    endDate: format(endDate!, "yyyy-MM-dd"),
     totalBooks,
     totalChapters,
     userMade: false,

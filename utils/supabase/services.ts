@@ -139,8 +139,8 @@ export async function CREATE_PLAN(
 
 export type CreatePlanSchedule = {
   planId: number;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   totalChapters: number;
   totalBooks: number;
   perDay: number;
