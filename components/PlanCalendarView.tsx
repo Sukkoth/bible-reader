@@ -178,7 +178,7 @@ function CalendarViewItem({
       ) : (
         <Checkbox
           id={item.goal}
-          className='checked:bg-secondary'
+          className='cursor-pointer border-gray-500 data-[state=checked]:bg-gray-500 dark:border-white dark:data-[state=checked]:bg-white'
           defaultChecked={item.status === "COMPLETED"}
           onCheckedChange={(checked) =>
             onChange(scheduleId, index, Boolean(checked))
