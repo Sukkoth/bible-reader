@@ -56,7 +56,7 @@ function AlertModal({
           <AlertDialogCancel onClick={onCancel}>{cancelText}</AlertDialogCancel>
           {useConfirmButton ? (
             <Button
-              className='bg-destructive hover:bg-destructive/90 w-32'
+              className='bg-destructive hover:bg-destructive/90 min-w-32'
               onClick={handleConfirm}
             >
               {isPending
@@ -69,7 +69,7 @@ function AlertModal({
             </Button>
           ) : (
             <AlertDialogAction
-              className='bg-destructive hover:bg-destructive/90 w-32'
+              className='bg-destructive hover:bg-destructive/90 min-w-32'
               onClick={handleConfirm}
             >
               {isPending
