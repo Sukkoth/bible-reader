@@ -23,6 +23,7 @@ import { Loader } from "lucide-react";
 import useFetch from "@/hooks/useFetch";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toast } from "@/hooks/use-toast";
 
 function CreateYourOwnPlan() {
   const router = useRouter();
@@ -51,6 +52,9 @@ function CreateYourOwnPlan() {
 
   useEffect(() => {
     if (handleCreatePlan.data?.plan.id) {
+      toast({
+        description: "Plan created successfully!",
+      });
       router.push(`/schedule/${handleCreatePlan.data?.plan.id}`);
     }
   }, [handleCreatePlan.data, router]);
@@ -91,7 +95,7 @@ function CreateYourOwnPlan() {
   return (
     <Card className='w-full bg-transparent mt-5'>
       <CardHeader>
-        <CardTitle className='text-3xl'>Create your own plan</CardTitle>
+        <CardTitle className='text-2xl'>Create your own plan</CardTitle>
         <CardDescription>
           You can create your own reading plan that suits your needs, Let&apos;s
           get started! Make sure you make it nice, so that others can discover

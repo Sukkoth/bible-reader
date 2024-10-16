@@ -4,6 +4,7 @@ import { deleteUserPlan } from "@/app/(with_layout)/plans/[planId]/_actions";
 import AlertModal from "./AlertModal";
 import { AlertDialogTrigger } from "./ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 type Props = {
   userPlanId?: number;
@@ -15,9 +16,11 @@ function DeleteSchedule({ userPlanId }: Props) {
     if (userPlanId) {
       const { status } = await deleteUserPlan(userPlanId);
       if (status === 200) {
+        toast({
+          description: "Plan Schedule removed!",
+        });
         router.replace("/plans");
       }
-      //TODO toast here
     }
   }
 
