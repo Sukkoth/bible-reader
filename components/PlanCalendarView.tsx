@@ -58,12 +58,13 @@ export default function PlanCalendarView({ plan }: Props) {
     startUpdatingScheduleItem(async () => {
       await updateScheduleItemStatus({ scheduleId, items: schedule });
       setUpdatingIndex(null);
-      const pendingItems = schedule.items?.filter(
+      const pendingItems = schedule.items?.some(
         (goal) => goal.status === "PENDING"
       );
-      if (pendingItems?.length === 0) {
+      if (!pendingItems) {
         toast({
-          description: "Todays plan complete",
+          title: "Complete",
+          description: "Today's plans are complete",
         });
       }
     });
