@@ -1,6 +1,6 @@
 import { books } from "@/lib/bible_books_list";
 import { CreatePlanSchedule } from "@/utils/supabase/services";
-import { addDays, format } from "date-fns";
+import { addDays, format, isPast, isSameDay } from "date-fns";
 
 type ArgProps = {
   selectedBooks: string[];
@@ -10,6 +10,7 @@ type ArgProps = {
   planId: string;
   totalBooks: number;
   totalChapters: number;
+  markPreviousAsComplete?: boolean;
 };
 
 export function forUserMade({
@@ -20,8 +21,10 @@ export function forUserMade({
   planId,
   totalBooks,
   totalChapters,
+  markPreviousAsComplete,
 }: ArgProps) {
   //get books along with chapters
+  const today = new Date();
   const booksWithChapters = selected
     .map((selectedBook) => {
       const selectedBookDetail = books.filter(
@@ -47,9 +50,17 @@ export function forUserMade({
   let currentDate = startDate;
 
   for (let i = 0; i < booksWithChapters.length; i += chapterCount) {
+    const date = format(currentDate, "yyyy-MM-dd");
+    const markPrevious =
+      markPreviousAsComplete && isPast(date) && !isSameDay(date, today);
+
     plan.push({
-      date: format(currentDate, "yyyy-MM-dd"),
-      items: booksWithChapters.slice(i, i + chapterCount),
+      date: date,
+      items: markPrevious
+        ? booksWithChapters.slice(i, i + chapterCount).map((item) => {
+            return { ...item, status: "COMPLETED" };
+          })
+        : booksWithChapters.slice(i, i + chapterCount),
     });
     currentDate = addDays(currentDate, 1);
   }
@@ -79,6 +90,7 @@ export function forCustomized(
     planId,
     totalBooks,
     totalChapters,
+    markPreviousAsComplete,
   }: ArgProps
 ) {
   const planItems = planItemsData.flat(1);
@@ -86,18 +98,24 @@ export function forCustomized(
 
   const plan = [];
   let currentDate = startDate;
+  const today = new Date();
 
   for (let i = 0; i < planItems.length; i += perSession) {
+    const date = format(currentDate, "yyyy-MM-dd");
+    const markPrevious =
+      markPreviousAsComplete && isPast(date) && !isSameDay(date, today);
+
     plan.push({
-      date: format(currentDate, "yyyy-MM-dd"),
+      date,
       items: planItems.slice(i, i + perSession).map((plan) => {
         return {
           goal: plan,
-          status: "PENDING",
+          status: markPrevious ? "COMPLETED" : "PENDING",
           notes: "",
         };
       }),
     });
+
     currentDate = addDays(currentDate, 1);
   }
   return {
@@ -116,9 +134,17 @@ export function forCustomized(
 // * plan that CANNOT be customized
 export function forUnCustomized(
   planItems: string[][],
-  { startDate, endDate, planId, totalBooks, totalChapters }: ArgProps
+  {
+    startDate,
+    endDate,
+    planId,
+    totalBooks,
+    totalChapters,
+    markPreviousAsComplete,
+  }: ArgProps
 ) {
   const currentDate = startDate;
+  const today = new Date();
   return {
     planId,
     startDate: format(startDate!, "yyyy-MM-dd"),
@@ -128,13 +154,16 @@ export function forUnCustomized(
     userMade: false,
     customizable: false,
     schedules: planItems.map((plans, i) => {
+      const date = format(addDays(currentDate, i), "yyyy-MM-dd");
+      const markPrevious =
+        markPreviousAsComplete && isPast(date) && !isSameDay(date, today);
       return {
         userPlanId: 1,
-        date: format(addDays(currentDate, i), "yyyy-MM-dd"),
+        date,
         items: plans.map((plan) => {
           return {
             goal: plan,
-            status: "PENDING",
+            status: markPrevious ? "COMPLETED" : "PENDING",
             notes: "",
           };
         }),

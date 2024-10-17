@@ -6,8 +6,15 @@ import { books, categorizedBooks } from "@/lib/bible_books_list";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import PlanDetailItem from "@/components/PlanDetailItem";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { addDays, format, formatDuration, intervalToDuration } from "date-fns";
+import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import {
+  addDays,
+  format,
+  formatDuration,
+  intervalToDuration,
+  isPast,
+  isSameDay,
+} from "date-fns";
 
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
@@ -16,6 +23,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 
 import {
@@ -38,6 +46,8 @@ import * as GeneratePlanSchedule from "@/utils/generateScheduleData";
 import { useParams, useRouter } from "next/navigation";
 import useFetch from "@/hooks/useFetch";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 type Props = {
   showBooks: boolean;
@@ -59,6 +69,15 @@ function CreatePlanSchedule(args: Props) {
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [chapterCount, setChapterCount] = useState(args.perDay);
+
+  /**
+   * when you first this platform, you might already had a reading plan you were following
+   * so you do not need to restart it here
+   * first you come and create the plan, but then you set the start date to the date when you first started reading it
+   * then you will be given option to set the previous dates (from today) as marked
+   * you do not need to sit and mark each and everyone of them as marked,
+   */
+  const [markPreviousAsComplete, setMarkPreviousAsComplete] = useState(false);
 
   const handleAddPlanToDb = useFetch<{ plan: UserPlan }>(
     `/api/plans/schedule/${planId}`,
@@ -85,9 +104,9 @@ function CreatePlanSchedule(args: Props) {
     { chapters: 0, verses: 0, books: 0 }
   );
 
-  //whenever chapter count and startDay change, push back the end date
   useEffect(() => {
-    if (startDate)
+    //whenever chapter count and startDay change, push back the end date
+    if (startDate) {
       setEndDate(
         addDays(
           startDate,
@@ -98,12 +117,23 @@ function CreatePlanSchedule(args: Props) {
             : args.selected.length
         )
       );
+
+      //date-fns makes marks today as past sometimes(based on time) hence using !isSameDay
+      if (!isSameDay(new Date(), startDate) && isPast(startDate)) {
+        setMarkPreviousAsComplete(true);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chapterCount, startDate]);
 
   //ro redirect when the data is created
   useEffect(() => {
     if (handleAddPlanToDb?.data?.plan?.id) {
+      toast({
+        title: "Success",
+        description: "Your reading schedule is created, REDIRECTING ",
+        duration: 4000,
+      });
       router.replace(`/plans/${handleAddPlanToDb?.data?.plan?.id}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,6 +153,7 @@ function CreatePlanSchedule(args: Props) {
           planId: planId as string,
           totalBooks: totalBooks.books,
           totalChapters: totalBooks.chapters,
+          markPreviousAsComplete: markPreviousAsComplete,
         });
       else if (args.customizable) {
         parsedData = GeneratePlanSchedule.forCustomized(args.selected, {
@@ -133,6 +164,7 @@ function CreatePlanSchedule(args: Props) {
           planId: planId as string,
           totalBooks: args.template.books.length,
           totalChapters: args.template.chaptersCount,
+          markPreviousAsComplete: markPreviousAsComplete,
         });
       } else {
         parsedData = GeneratePlanSchedule.forUnCustomized(args.selected, {
@@ -143,6 +175,7 @@ function CreatePlanSchedule(args: Props) {
           planId: planId as string,
           totalBooks: args.template.books.length,
           totalChapters: args.template.chaptersCount,
+          markPreviousAsComplete: markPreviousAsComplete,
         });
       }
       await handleAddPlanToDb.fetchData({
@@ -151,6 +184,16 @@ function CreatePlanSchedule(args: Props) {
       });
     }
   }
+
+  const daysToFinishPlan = args.customizable
+    ? args.userMade
+      ? Math.ceil(totalBooks.chapters / chapterCount) - 1 || 0
+      : Math.ceil(args.selected.flat(1).length / chapterCount)
+    : args.selected.length;
+
+  const dayToFinishIsInPast = isPast(
+    addDays(startDate || new Date(), daysToFinishPlan)
+  );
 
   return (
     <div>
@@ -169,14 +212,17 @@ function CreatePlanSchedule(args: Props) {
             <p className='text-sm'>* Select Books to read </p>
           </>
         ) : args?.template ? (
-          <div className='text-sm'>
-            <p>
-              <strong>Name</strong>: {args.template.plans.name}
-            </p>
-            <p>
-              <strong>Description</strong>: {args.template.plans.description}
-            </p>
-          </div>
+          <Card className='mt-5'>
+            <CardHeader>
+              <CardTitle className='text-lg'>
+                {" "}
+                {args.template.plans.name}
+              </CardTitle>
+              <CardDescription>
+                {args.template.plans.description}
+              </CardDescription>
+            </CardHeader>
+          </Card>
         ) : (
           <>
             <p className='text-sm'>
@@ -242,7 +288,7 @@ function CreatePlanSchedule(args: Props) {
           </Button>
         )}
         {showTime && (
-          <div className='mt-10'>
+          <div className='mt-5'>
             {args.userMade ? (
               <div className='grid grid-cols-3 gap-3'>
                 <PlanDetailItem
@@ -279,27 +325,33 @@ function CreatePlanSchedule(args: Props) {
                 />
               </div>
             )}
-            <Card className='mt-10 px-2 '>
-              <CardHeader className='text-xl'>
-                Plan your reading schedule
-                <CardDescription className='pt-2'>
-                  Select the date you want to start this plan (defaults to
-                  today).{" "}
-                  {args.customizable &&
-                    `You can use the counter to adjust how many chapters
-                  you want to read per day and the end date will be calculated
-                  according to it.`}
-                  {args.userMade && (
-                    <span className='block border px-2 py-3 rounded-sm mt-3'>
-                      ⚠️ Minimim is 1 chapter a day
-                    </span>
-                  )}
+            <Card className='my-5 px-2'>
+              <CardHeader className='text-lg'>
+                <CardTitle>Plan your reading schedule</CardTitle>
+                <CardDescription className=''>
+                  Select the date you want to start this plan.{" "}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className='space-y-5'>
                   <div className='space-y-5'>
                     <div className='flex flex-col gap-2'>
+                      {dayToFinishIsInPast && (
+                        <Alert
+                          className='shadow-none mb-5'
+                          variant={"destructive"}
+                        >
+                          <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />
+                          <AlertTitle className='font-bold'>
+                            Invalid start date
+                          </AlertTitle>
+                          <AlertDescription>
+                            Adjust your start date after you change chapters per
+                            day, so that minimum ending date is tomorrow (
+                            {format(addDays(new Date(), 1), "EEEE, d")})
+                          </AlertDescription>
+                        </Alert>
+                      )}
                       <Label>Start Date</Label>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -308,7 +360,9 @@ function CreatePlanSchedule(args: Props) {
                             variant={"outline"}
                             className={cn(
                               "w-full justify-start text-left font-normal",
-                              !startDate && "text-muted-foreground"
+                              !startDate && "text-muted-foreground",
+                              dayToFinishIsInPast &&
+                                "text-destructive border-destructive"
                             )}
                           >
                             <CalendarIcon className='mr-2 h-4 w-4' />
@@ -322,7 +376,9 @@ function CreatePlanSchedule(args: Props) {
                         <PopoverContent className='w-auto p-0' align='start'>
                           <Calendar
                             mode='single'
-                            disabled={(date) => date < addDays(new Date(), -1)}
+                            disabled={(date) =>
+                              isPast(addDays(date, daysToFinishPlan))
+                            }
                             selected={startDate}
                             onSelect={setStartDate}
                             initialFocus
@@ -331,8 +387,7 @@ function CreatePlanSchedule(args: Props) {
                       </Popover>
                     </div>
                   </div>
-
-                  <div className='flex justify-center'>
+                  <div className='flex justify-center flex-col items-center'>
                     {/* they should be visible only for those plans which are customizable */}
                     {args.customizable && (
                       <div className='flex items-center gap-4'>
@@ -365,55 +420,100 @@ function CreatePlanSchedule(args: Props) {
                         </Button>
                       </div>
                     )}
+                    {/* if startDate is in the past, give option to set previous schedules as marked */}
+                    {startDate &&
+                    !isSameDay(new Date(), startDate) &&
+                    isPast(startDate) ? (
+                      <div className='inline-flex gap-2 mt-4 self-start border px-3 py-[16px] rounded-sm w-full bg-background'>
+                        <Checkbox
+                          id={"setPreviousAsMarked"}
+                          className='cursor-pointer border-gray-500 data-[state=checked]:bg-gray-500 dark:border-white dark:data-[state=checked]:bg-white'
+                          checked={markPreviousAsComplete}
+                          onCheckedChange={(checked) =>
+                            typeof checked === "boolean" &&
+                            setMarkPreviousAsComplete(checked)
+                          }
+                        />
+                        <Label
+                          className='cursor-pointer'
+                          htmlFor='setPreviousAsMarked'
+                        >
+                          Set previous schedules as complete
+                        </Label>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
-                </div>
-                <div
-                  className={cn(
-                    `grid mt-5 gap-3`,
-                    { "grid-cols-3": args.userMade },
-                    { "grid-cols-2": !args.userMade }
-                  )}
-                >
-                  {args.userMade && (
+                  <div
+                    className={cn(
+                      `grid mt-5 gap-3`,
+                      { "grid-cols-3": args.userMade },
+                      { "grid-cols-2": !args.userMade }
+                    )}
+                  >
+                    {args.userMade && (
+                      <PlanDetailItem
+                        header='Per Day'
+                        subText={`${chapterCount} Chapters`}
+                        icon={<BookMarked size={20} />}
+                      />
+                    )}
+
                     <PlanDetailItem
-                      header='Per Day'
-                      subText={`${chapterCount} Chapters`}
-                      icon={<BookMarked size={20} />}
-                    />
-                  )}
-                  {startDate && (
-                    <PlanDetailItem
+                      variant={
+                        dayToFinishIsInPast || !startDate
+                          ? "destructive"
+                          : "default"
+                      }
                       header='Starts'
-                      subText={`${format(startDate, "MMM d,y")}`}
+                      subText={`${
+                        startDate ? format(startDate, "MMM d,y") : "N/A"
+                      }`}
                       icon={<Send size={20} />}
                     />
-                  )}
-                  {endDate && (
+
                     <PlanDetailItem
+                      variant={
+                        dayToFinishIsInPast || !startDate || !endDate
+                          ? "destructive"
+                          : "default"
+                      }
                       header='Ends'
-                      subText={`${format(endDate, "MMM d,y")}`}
+                      subText={`${
+                        startDate && endDate
+                          ? format(endDate, "MMM d,y")
+                          : "N/A"
+                      }`}
                       icon={<Hourglass size={20} />}
                     />
-                  )}
+                  </div>
                 </div>
-                {startDate && endDate && (
-                  <p className='text-center text-sm mt-5'>
-                    You will finish this plan in{" "}
-                    {formatDuration(
-                      intervalToDuration({
-                        start: addDays(startDate, -1),
-                        end: endDate,
-                      })
-                    )}
+
+                <div>
+                  <p
+                    className={cn("text-center text-sm pt-5", {
+                      "text-destructive":
+                        !startDate || !endDate || dayToFinishIsInPast,
+                    })}
+                  >
+                    {startDate && endDate && !dayToFinishIsInPast
+                      ? `You will finish this plan in  ${formatDuration(
+                          intervalToDuration({
+                            start: addDays(startDate, -1),
+                            end: endDate,
+                          })
+                        )}`
+                      : "Select Valid start and end dates"}
                   </p>
-                )}
+                </div>
               </CardContent>
             </Card>
 
             {args.customizable && (
               <Button
                 size={"lg"}
-                className='w-full my-5'
+                className='w-full mb-5'
                 variant={"outline"}
                 onClick={() => setShowTime(false)}
               >
@@ -422,8 +522,12 @@ function CreatePlanSchedule(args: Props) {
             )}
             <Button
               size={"lg"}
-              disabled={handleAddPlanToDb.isPending}
-              className='w-full my-5'
+              disabled={
+                handleAddPlanToDb.isPending ||
+                !Boolean(startDate) ||
+                dayToFinishIsInPast
+              }
+              className='w-full'
               onClick={handleGenerateData}
             >
               {handleAddPlanToDb.isPending
