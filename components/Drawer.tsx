@@ -73,7 +73,7 @@ function Drawer({ avatar }: Props) {
         } transition-all duration-300 opacity-100`}
       >
         <div
-          className='text-primary hover:opacity-80 cursor-pointer self-end me-5'
+          className='text-primary hover:opacity-80 cursor-pointer self-end me-4 mt-4'
           onClick={() => setShowDrawer(false)}
         >
           <CloseIcon className='text-3xl' />
@@ -128,11 +128,11 @@ const drawerItems = [
     label: "My Plans",
     to: "/plans",
   },
-  // {
-  //   icon: <User className='size-5' />,
-  //   label: "Profile",
-  //   to: "/profile",
-  // },
+  {
+    icon: <User className='size-5' />,
+    label: "Profile",
+    to: "/profile",
+  },
   // {
   //   icon: <Settings className='size-5' />,
   //   label: "Settings",

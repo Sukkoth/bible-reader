@@ -56,7 +56,7 @@ type Props = {
   perDay: number;
   customizable: boolean;
   userMade: boolean;
-  template: Template;
+  template?: Template;
 };
 
 function CreatePlanSchedule(args: Props) {
@@ -85,6 +85,14 @@ function CreatePlanSchedule(args: Props) {
   );
 
   function handleSelected() {
+    if (selectionRef.current.length === 0) {
+      //if no books selected, do not proceed
+      toast({
+        title: "No books selected",
+        description: "Select books you want to read!",
+      });
+      return;
+    }
     setSelected(selectionRef.current);
     setShowTime(true);
   }
@@ -162,8 +170,8 @@ function CreatePlanSchedule(args: Props) {
           endDate,
           chapterCount,
           planId: planId as string,
-          totalBooks: args.template.books.length,
-          totalChapters: args.template.chaptersCount,
+          totalBooks: args!.template!.books.length,
+          totalChapters: args!.template!.chaptersCount,
           markPreviousAsComplete: markPreviousAsComplete,
         });
       } else {
@@ -173,8 +181,8 @@ function CreatePlanSchedule(args: Props) {
           endDate,
           chapterCount,
           planId: planId as string,
-          totalBooks: args.template.books.length,
-          totalChapters: args.template.chaptersCount,
+          totalBooks: args!.template!.books.length,
+          totalChapters: args!.template!.chaptersCount,
           markPreviousAsComplete: markPreviousAsComplete,
         });
       }
@@ -311,16 +319,16 @@ function CreatePlanSchedule(args: Props) {
               <div className='grid grid-cols-2 gap-3'>
                 <PlanDetailItem
                   header='Books'
-                  subText={`${args.template.books.length}`}
+                  subText={`${args!.template!.books.length}`}
                   icon={<BookMarked size={20} />}
                 />
                 <PlanDetailItem
                   header={
-                    args.template.templateType === "PORTION"
+                    args!.template!.templateType === "PORTION"
                       ? "Portions"
                       : "Chapters"
                   }
-                  subText={`${args.template.chaptersCount}`}
+                  subText={`${args!.template!.chaptersCount}`}
                   icon={<NotebookText size={20} />}
                 />
               </div>
