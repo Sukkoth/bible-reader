@@ -8,6 +8,7 @@ import { LoginSchema } from "@/lib/schemas/authSchema";
 import { Provider } from "@supabase/supabase-js";
 import { sendNotification } from "@/notifications/NotificationSender";
 import { PushSubscription } from "web-push";
+import { MARK_PLAN_AS_COMPLETE } from "@/utils/supabase/services";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function login(prevState: any, formData: FormData) {
@@ -104,4 +105,21 @@ export async function notificationAction(args: NotificationActionArgs) {
     },
   });
   return;
+}
+
+export async function markPlanAsComplete(planId: number) {
+  try {
+    await MARK_PLAN_AS_COMPLETE(planId);
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        typeof error === "string"
+          ? error
+          : "Could not mark as complete on server",
+    };
+  }
 }

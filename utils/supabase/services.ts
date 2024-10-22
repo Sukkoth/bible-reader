@@ -226,6 +226,10 @@ export async function GET_PLANS(userId: string) {
     .from("userPlans")
     .select("*, plans(*), schedules(*)")
     .order("id", { referencedTable: "schedules" })
+    .order("completedAt", {
+      nullsFirst: true,
+    }) //display completedAt = null plans first
+
     .eq("userId", userId);
   if (error) {
     throw new Error(error.message || "Something went wrong");
@@ -263,7 +267,7 @@ export async function GET_TODAYS_PLANS(userId: string) {
     .from("userPlans")
     .select("*, plans(*), schedules(*)")
     .eq("userId", userId)
-    // .eq("schedules.date", "2024-09-27");
+    .is("completedAt", null)
     .eq("schedules.date", format(new Date(), "yyyy-MM-dd"));
 
   if (error) {
@@ -273,6 +277,20 @@ export async function GET_TODAYS_PLANS(userId: string) {
   return (data as UserPlan[])?.filter(
     (dataItem) => dataItem.schedules.length > 0
   );
+}
+
+export async function MARK_PLAN_AS_COMPLETE(userPlanId: number) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("userPlans")
+    .update({ completedAt: format(new Date(), "yyyy-MM-dd") })
+    .eq("id", userPlanId)
+    .select();
+
+  if (error) {
+    throw new Error(error?.message || "Something went wrong");
+  }
+  return data;
 }
 
 //* TEMPLATES
@@ -349,4 +367,80 @@ export async function DELETE_USER_PLAN(userPlanId: number) {
     .eq("id", userPlanId);
 
   return { error };
+}
+
+//* BOOK TRACKER
+
+export async function GET_BOOK_PROGRESS(book: string) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from("bibleTracker")
+    .select("*")
+    .eq("userId", user!.id)
+    .eq("book", book);
+  if (error) {
+    throw new Error(error?.message || "Something went wrong");
+  }
+
+  return data;
+}
+
+export type MarkChapterBook = {
+  id?: number;
+  book: string;
+  progress: BookProgressItem[];
+  markAsComplete: boolean;
+};
+export async function MARK_BOOK_CHAPTER({
+  book,
+  progress,
+  id,
+  markAsComplete,
+}: MarkChapterBook) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user || !user.id) {
+    throw new Error("Not authenticated");
+  }
+  const { data, error } = await supabase
+    .from("bibleTracker")
+    .upsert({
+      id,
+      userId: user.id,
+      book,
+      progress: progress,
+      completedAt: markAsComplete ? format(new Date(), "yyyy-MM-dd") : null,
+    })
+    .eq("userId", user.id)
+    .eq("book", book)
+    .single();
+
+  if (error) {
+    throw new Error(error?.message || "Something went wrong");
+  }
+
+  return data;
+}
+
+export async function GET_COMPLETED_BOOKS() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data } = await supabase
+    .from("bibleTracker")
+    .select("book")
+    .eq("userId", user!.id)
+    .not("completedAt", "is", null);
+
+  const parsed = data ? data.map((book) => book.book) : [];
+  return parsed as string[];
 }

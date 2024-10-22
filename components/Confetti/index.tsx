@@ -6,23 +6,36 @@ type Props = {
   target: number;
 };
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReactConfetti from "react-confetti";
+import { markPlanAsComplete } from "@/actions";
+import { toast } from "@/hooks/use-toast";
 
 export default function Confetti({ planId, progress, target }: Props) {
   const { width, height } = useWindowSize();
   const [showConfetti, setShowConfetti] = useState(false);
 
-  useEffect(() => {
-    // Check if confetti has already been shown for this plan (based on planId)
-    const confettiStats = localStorage.getItem(`confetti`) || "";
-    const hasShownConfetti = confettiStats.includes(`|${planId}`);
+  const handleComplete = useCallback(async () => {
+    return await markPlanAsComplete(parseInt(planId, 10));
+  }, [planId]);
 
-    if (progress === target && !hasShownConfetti) {
-      setShowConfetti(true);
-      localStorage.setItem(`confetti`, confettiStats.concat(`|${planId}`));
+  useEffect(() => {
+    async function complete() {
+      if (progress === target) {
+        const { success } = await handleComplete();
+        if (success) {
+          setShowConfetti(true);
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Error to update",
+            description: "Could not mark the plan as complete on server",
+          });
+        }
+      }
     }
-  }, [progress, target, planId]);
+    complete();
+  }, [progress, target, planId, handleComplete]);
 
   return (
     <>

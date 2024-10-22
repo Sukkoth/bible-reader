@@ -23,6 +23,7 @@ import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { updateScheduleItemStatus } from "@/app/(with_layout)/plans/[planId]/_actions";
 import { toast } from "@/hooks/use-toast";
+import { handleAddItemToReadList } from "@/app/(with_layout)/bible-tracker/_actions";
 
 type Props = {
   plan: UserPlan;
@@ -68,6 +69,12 @@ export default function PlanCalendarView({ plan }: Props) {
         });
       }
     });
+    // add to read list
+    const [bookName, chapter, ...others] =
+      schedule.items[goalIndex].goal.split(" ");
+    if (!others.length && !isNaN(parseInt(chapter, 10))) {
+      handleAddItemToReadList(bookName, parseInt(chapter, 10));
+    }
   }
 
   useEffect(() => {
@@ -194,7 +201,7 @@ function CalendarViewItem({
           }
         />
       )}
-      <Label htmlFor={item.goal} className='text-sm'>
+      <Label htmlFor={item.goal} className='text-sm cursor-pointer'>
         {item.goal}
       </Label>
     </div>

@@ -1,4 +1,5 @@
 import { PushSubscription } from "web-push";
+import { string } from "zod";
 
 declare global {
   declare type ScheduleStatus = "PENDING" | "COMPLETED";
@@ -62,6 +63,7 @@ declare global {
     perDay: number;
     userMade: boolean;
     customizable: boolean;
+    completedAt: Date;
     plans: Plan;
   }
 
@@ -84,5 +86,16 @@ declare global {
     created_at: Date;
     updated_at: Date;
     plans: Plan;
+  }
+
+  interface BookProgressItem {
+    chapter: number;
+    status: ScheduleStatus;
+  }
+  interface BookProgress {
+    id: number;
+    userId: string;
+    book: string;
+    progress: BookProgressItem[];
   }
 }

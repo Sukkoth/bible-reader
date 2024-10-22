@@ -8,6 +8,8 @@ import {
   LogOutIcon,
   BookMarked,
   SunMoon,
+  BookCheck,
+  BookOpenCheck,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -132,6 +134,11 @@ const drawerItems = [
     icon: <User className='size-5' />,
     label: "Profile",
     to: "/profile",
+  },
+  {
+    icon: <BookOpenCheck className='size-5' />,
+    label: "Bible Tracker",
+    to: "/bible-tracker",
   },
   // {
   //   icon: <Settings className='size-5' />,

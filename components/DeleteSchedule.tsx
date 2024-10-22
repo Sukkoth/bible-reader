@@ -5,6 +5,7 @@ import AlertModal from "./AlertModal";
 import { AlertDialogTrigger } from "./ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "./ui/button";
 
 type Props = {
   userPlanId?: number;
@@ -48,9 +49,9 @@ function DeleteSchedule({ userPlanId }: Props) {
       onConfirm={handleDeleteSchedule}
     >
       <AlertDialogTrigger className='w-full'>
-        <div className='w-full bg-destructive h-12 rounded-md px-8 flex items-center justify-center text-sm hover:bg-destructive/90 text-white'>
+        <Button className='w-full' variant={"destructive"} size={"lg"}>
           Delete Plan
-        </div>
+        </Button>
       </AlertDialogTrigger>
     </AlertModal>
   );

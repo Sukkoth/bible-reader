@@ -100,11 +100,13 @@ async function Plan({ params }: { params: { planId: string } }) {
             >
               <h1 className='text-3xl font-bold'>{`${completedPercent}%`}</h1>
             </CalendarStatItem>
-            <Confetti
-              planId={plan.id.toString()}
-              progress={progress}
-              target={target}
-            />
+            {!plan.completedAt && (
+              <Confetti
+                planId={plan.id.toString()}
+                progress={progress}
+                target={target}
+              />
+            )}
           </div>
         </CardHeader>
         <CardContent className='overflow-hidden px-3 sm:px-6 w-full'>
