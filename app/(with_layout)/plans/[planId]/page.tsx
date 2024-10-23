@@ -24,6 +24,13 @@ import DeleteSchedule from "@/components/DeleteSchedule";
 import { notFound } from "next/navigation";
 import Confetti from "@/components/Confetti";
 import { spartanFont } from "@/lib/fonts";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Bible Reader | Plan",
+  description:
+    "Follow up your created plans each day. Easy to follow up with your schedule",
+};
 
 async function Plan({ params }: { params: { planId: string } }) {
   const { user } = await GET_USER().catch();

@@ -1,5 +1,6 @@
 import CreatePlanSchedule from "@/components/schedule/CreatePlanSchedule";
 import { GET_TEMPLATE } from "@/utils/supabase/services";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 type Props = {
@@ -14,6 +15,11 @@ type PropsToPass = {
   customizable: boolean;
   userMade: boolean;
   template?: Template;
+};
+
+export const metadata: Metadata = {
+  title: "Bible Reader | Schedule",
+  description: "Create schedule for your plan.",
 };
 
 async function Page({ searchParams }: Props) {

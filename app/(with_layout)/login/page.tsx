@@ -3,7 +3,6 @@ import React from "react";
 
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -13,7 +12,12 @@ import LoginForm from "@/components/forms/LoginForm";
 import SocialAuth from "@/components/SocialAuth";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Bible Reader | Login",
+  description: "Login and browse your plans and schedules",
+};
 async function Login() {
   const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();

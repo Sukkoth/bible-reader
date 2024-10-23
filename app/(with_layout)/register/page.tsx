@@ -1,16 +1,20 @@
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 import RegisterForm from "@/components/forms/RegisterForm";
 
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import SocialAuth from "@/components/SocialAuth";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Bible Reader | Register",
+  description: "Register now and embark on your bible reading plan journey.",
+};
 
 function Register() {
   return (

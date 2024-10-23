@@ -1,6 +1,12 @@
 import BackButton from "@/components/BackButton";
 import { GET_TEMPLATES } from "@/utils/supabase/services";
 import NewPlanItem from "@/components/NewPlanItem";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Bible Reader | Popular Plans",
+  description: `Discover a curated selection of reading plans crafted by scholars and trusted organizations to help you achieve specific goals in your spiritual journey. These carefully designed plans offer structured, time-tested approaches to deepen your understanding of the Bible.`,
+};
 
 async function PopularPlans() {
   const templates = await GET_TEMPLATES({ userMade: false });

@@ -2,6 +2,7 @@ import BackButton from "@/components/BackButton";
 import Chapters from "@/components/BibleTracker/Chapters";
 import { books } from "@/lib/bible_books_list";
 import { GET_BOOK_PROGRESS } from "@/utils/supabase/services";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -10,6 +11,11 @@ type Props = {
 };
 
 type Progress = Pick<BookProgress, "progress">;
+
+export const metadata: Metadata = {
+  title: "Bible Reader | Tracker",
+  description: "Track your bible reading progress.",
+};
 
 async function Page({ params }: Props) {
   const bookName = params.bookName.replace("%20", " ");

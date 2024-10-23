@@ -21,7 +21,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import PlanDetailItem from "@/components/PlanDetailItem";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Bible Reader | Profile",
+};
 async function Profile() {
   const { user, profile } = await GET_USER();
 

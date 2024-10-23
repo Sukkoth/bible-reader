@@ -6,7 +6,13 @@ import {
   GET_BOOKS_PROGRESS,
   GET_COMPLETED_BOOKS,
 } from "@/utils/supabase/services";
+import { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Bible Reader | Tracker",
+  description: "Track your bible reading progress.",
+};
 
 type BibleBook = {
   book: string;

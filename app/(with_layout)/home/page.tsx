@@ -14,7 +14,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import NotificationRequest from "@/components/NotificationRequest";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Bible Reader | Home",
+  description: "Read your bible, discover the world of amazing grace!",
+};
 async function Home() {
   const { user, profile } = await GET_USER();
 

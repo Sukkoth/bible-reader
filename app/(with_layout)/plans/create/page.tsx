@@ -2,7 +2,13 @@ import BackButton from "@/components/BackButton";
 import { Siren } from "lucide-react";
 import { GET_TEMPLATES } from "@/utils/supabase/services";
 import ListTemplates from "@/components/plans/ListTemplates";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Bible Reader | Create Plan",
+  description:
+    "Create your own plan according to your own need and comfortable pace",
+};
 async function CreatePlan() {
   const templates = await GET_TEMPLATES({ userMade: true });
   return (
