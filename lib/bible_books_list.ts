@@ -420,7 +420,7 @@ export const categorizedBooks: CategorizedBooks = {
     { book: "2 Peter", verses: 61, chapters: 3, bookShort: "2Pet" },
     { book: "1 John", verses: 105, chapters: 5, bookShort: "1John" },
     { book: "2 John", verses: 13, chapters: 1, bookShort: "2John" },
-    { book: "3 John", verses: 14, chapters: 1, bookShort: "3Joohn" },
+    { book: "3 John", verses: 14, chapters: 1, bookShort: "3John" },
     { book: "Jude", verses: 25, chapters: 1, bookShort: "Jude" },
   ],
   Revelation: [

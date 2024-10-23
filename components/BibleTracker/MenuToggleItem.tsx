@@ -13,7 +13,7 @@ function MenuToggleItem({ title, onClick, active = false }: Props) {
       onClick={onClick}
       variant={"outline"}
       className={cn(
-        "border rounded-md flex flex-col items-center justify-center size-16 xxs:size-[90px] xs:size-28 p-2",
+        "border rounded-none h-14 flex flex-col items-center justify-center p-2",
         {
           "dark:bg-stone-800 bg-stone-200": active,
         }

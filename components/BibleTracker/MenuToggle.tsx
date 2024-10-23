@@ -10,7 +10,7 @@ type Props = {
 
 function MenuToggle({ displaying, handleMenuChange }: Props) {
   return (
-    <div className='flex justify-between p-3'>
+    <div className='grid grid-cols-2 p-3'>
       {menuItems.map((menu) => (
         <MenuToggleItem
           active={displaying === menu.set}
@@ -32,10 +32,10 @@ const menuItems = [
     title: "New Testament",
     set: "new",
   },
-  {
-    title: "Stats",
-    set: "stats",
-  },
+  // {
+  //   title: "Stats",
+  //   set: "stats",
+  // },
 ];
 
 export default MenuToggle;

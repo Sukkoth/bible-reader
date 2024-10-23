@@ -19,7 +19,7 @@ function BibleTracker({ completed }: Props) {
     <div>
       {/* menu toggle on top*/}
       <MenuToggle displaying={displaying} handleMenuChange={handleChangeMenu} />
-      <Separator className='my-5' />
+      <Separator className='my-3' />
       {/*displaying === stats => list stats */}
       {/* displaying === [old, new] => list books based on 'displayng' */}
       {displaying !== "stats" && (
