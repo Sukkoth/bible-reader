@@ -49,7 +49,7 @@ async function Home() {
   }
 
   return (
-    <div className='relative overflow-hidden'>
+    <div className='overflow-hidden'>
       <NotificationRequest />
       <div className='pt-5 flex justify-between'>
         <div>

@@ -74,7 +74,7 @@ body {
     @apply border-border;
   }
   body {
-    @apply dark:bg-slate-950 bg-gray-50 text-foreground;
+    @apply dark:bg-stone-950 bg-gray-50 text-foreground;
   }
   .center-all {
     @apply flex items-center justify-center;
