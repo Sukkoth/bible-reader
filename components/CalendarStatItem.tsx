@@ -56,10 +56,9 @@ function CalendarStatItem({
   }
 
   return (
-    <div className='hover:bg-secondary rounded-full cursor-pointer'>
+    <div className='hover:bg-secondary/50 rounded-full cursor-pointer'>
       <CircularProgressbarWithChildren
         value={percentage}
-        // text={`${text}`}
         strokeWidth={strokeWidth}
         styles={{
           trail: {

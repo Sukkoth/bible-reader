@@ -1,21 +1,28 @@
 import React from "react";
 import MenuToggleItem from "./MenuToggleItem";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type Displaying = "stats" | "old" | "new";
 type Props = {
-  // eslint-disable-next-line no-unused-vars
-  handleMenuChange: (menu: Displaying) => void;
   displaying: Displaying;
 };
 
-function MenuToggle({ displaying, handleMenuChange }: Props) {
+function MenuToggle({ displaying }: Props) {
+  const params = useSearchParams();
+  const router = useRouter();
+
+  const handleUpdateSearchParam = (menu: Displaying) => {
+    const newParams = new URLSearchParams(params.toString());
+    newParams.set("tab", menu);
+    router.push(`${window.location.pathname}?${newParams.toString()}`);
+  };
   return (
-    <div className='grid grid-cols-2 p-3'>
+    <div className='grid grid-cols-3 p-3 pb-0'>
       {menuItems.map((menu) => (
         <MenuToggleItem
           active={displaying === menu.set}
           title={menu.title}
-          onClick={() => handleMenuChange(menu.set as Displaying)}
+          onClick={() => handleUpdateSearchParam(menu.set as Displaying)}
           key={menu.title}
         />
       ))}
@@ -32,10 +39,10 @@ const menuItems = [
     title: "New Testament",
     set: "new",
   },
-  // {
-  //   title: "Stats",
-  //   set: "stats",
-  // },
+  {
+    title: "Overview",
+    set: "stats",
+  },
 ];
 
 export default MenuToggle;

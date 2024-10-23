@@ -24,6 +24,8 @@ type Props = {
   confirmText?: string;
   useConfirmButton: ReactNode;
   pendingText?: string;
+  open?: boolean;
+  onOpenChange: () => void;
 };
 function AlertModal({
   title,
@@ -35,6 +37,8 @@ function AlertModal({
   confirmText = "Confrim",
   useConfirmButton,
   pendingText,
+  open,
+  onOpenChange,
 }: Props) {
   const [isPending, startTransition] = useTransition();
 
@@ -45,7 +49,7 @@ function AlertModal({
       });
   }
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       {children}
       <AlertDialogContent>
         <AlertDialogHeader>

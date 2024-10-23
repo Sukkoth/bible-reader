@@ -389,6 +389,20 @@ export async function GET_BOOK_PROGRESS(book: string) {
   return data;
 }
 
+export async function GET_BOOKS_PROGRESS() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data } = await supabase
+    .from("bibleTracker")
+    .select("*")
+    .eq("userId", user!.id);
+
+  return data;
+}
+
 export type MarkChapterBook = {
   id?: number;
   book: string;
@@ -429,6 +443,28 @@ export async function MARK_BOOK_CHAPTER({
   return data;
 }
 
+export async function MARK_ALL_CHAPTERS_IN_BOOK(
+  data: Pick<BookProgress, "book" | "progress"> & { id?: number }
+) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error } = await supabase
+    .from("bibleTracker")
+    .upsert({
+      ...data,
+      userId: user!.id,
+      completedAt: format(new Date(), "yyyy-MM-dd"),
+    })
+    .eq("userId", user!.id)
+    .eq("book", data.book)
+    .single();
+
+  return { error };
+}
+
 export async function GET_COMPLETED_BOOKS() {
   const supabase = createClient();
   const {
@@ -443,4 +479,18 @@ export async function GET_COMPLETED_BOOKS() {
 
   const parsed = data ? data.map((book) => book.book) : [];
   return parsed as string[];
+}
+
+export async function RESET_BIBLE_READING_PROGRESS() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error } = await supabase
+    .from("bibleTracker")
+    .delete()
+    .eq("userId", user!.id);
+
+  return { error };
 }

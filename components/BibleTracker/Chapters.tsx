@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { markChapter } from "@/app/(with_layout)/bible-tracker/_actions";
 import { Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import MarkChaptersAsReadButton from "./MarkChaptersAsReadButton";
 
 type Props = {
   length: number;
@@ -64,27 +65,32 @@ function Chapters({ length, progress, book, id }: Props) {
   }
 
   return (
-    <div className='grid grid-cols-2 xs:grid-cols-4 sm:grid-cols-6 gap-2 p-3'>
-      {Array.from({ length }, (_, index) => index + 1).map((chapter) => (
-        <Button
-          onClick={() => handleMark(chapter)}
-          variant={
-            progress.length &&
-            progress.find((pr: BookProgressItem) => pr.chapter === chapter)
-              ?.status === "COMPLETED"
-              ? "default"
-              : "secondary"
-          }
-          key={chapter}
-          className='size-16 text-xs px-3 hover:scale-110 duration-500 transition-transform'
-        >
-          {isUpdating && chapterToUpdate === chapter ? (
-            <Loader2 className='animate-spin size-4' />
-          ) : (
-            chapter
-          )}
-        </Button>
-      ))}
+    <div>
+      <div className='grid grid-cols-2 xs:grid-cols-4 sm:grid-cols-6 gap-2 p-3'>
+        {Array.from({ length }, (_, index) => index + 1).map((chapter) => (
+          <Button
+            onClick={() => handleMark(chapter)}
+            variant={
+              progress.length &&
+              progress.find((pr: BookProgressItem) => pr.chapter === chapter)
+                ?.status === "COMPLETED"
+                ? "default"
+                : "secondary"
+            }
+            key={chapter}
+            className='size-16 text-xs px-3 hover:scale-110 duration-500 transition-transform'
+          >
+            {isUpdating && chapterToUpdate === chapter ? (
+              <Loader2 className='animate-spin size-4' />
+            ) : (
+              chapter
+            )}
+          </Button>
+        ))}
+      </div>
+      {progress.length < length && (
+        <MarkChaptersAsReadButton bookName={book} progressId={id} />
+      )}
     </div>
   );
 }

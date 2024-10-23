@@ -97,5 +97,6 @@ declare global {
     userId: string;
     book: string;
     progress: BookProgressItem[];
+    completedAt: string | null;
   }
 }

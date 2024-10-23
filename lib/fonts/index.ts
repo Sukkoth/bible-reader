@@ -3,7 +3,7 @@ import { League_Spartan, Space_Mono } from "next/font/google";
 export const spaceFont = Space_Mono({
   weight: ["400", "700"],
   subsets: ["latin"],
-  display: "swap",
+  display: "auto",
 });
 
 export const spartanFont = League_Spartan({

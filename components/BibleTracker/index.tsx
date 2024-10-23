@@ -3,24 +3,39 @@
 import ListBooks from "@/components/BibleTracker/ListBooks";
 import MenuToggle from "@/components/BibleTracker/MenuToggle";
 import { Separator } from "@/components/ui/separator";
-import React, { useState } from "react";
+import React from "react";
+import Stats from "./Stats";
+import { useSearchParams } from "next/navigation";
+
+type StatItemProp = {
+  oldTestament: number;
+  newTestament: number;
+  wholeBible: number;
+};
 
 type Displaying = "stats" | "old" | "new";
 type Props = {
   completed: string[];
+  stats: {
+    chapters: StatItemProp;
+    books: StatItemProp;
+  };
 };
-function BibleTracker({ completed }: Props) {
-  const [displaying, setDisplaying] = useState<Displaying>("new");
-  function handleChangeMenu(menu: Displaying) {
-    setDisplaying(menu);
-  }
+function BibleTracker({ completed, stats }: Props) {
+  const params = useSearchParams();
+  const tab = params.get("tab");
+  const displaying =
+    tab && ["stats", "old", "new"].includes(tab)
+      ? (tab as Displaying)
+      : "stats";
 
   return (
     <div>
       {/* menu toggle on top*/}
-      <MenuToggle displaying={displaying} handleMenuChange={handleChangeMenu} />
-      <Separator className='my-3' />
+      <MenuToggle displaying={displaying} />
+      <Separator className='my-5' />
       {/*displaying === stats => list stats */}
+      {displaying === "stats" && <Stats stats={stats} />}
       {/* displaying === [old, new] => list books based on 'displayng' */}
       {displaying !== "stats" && (
         <ListBooks displaying={displaying} completed={completed} />
