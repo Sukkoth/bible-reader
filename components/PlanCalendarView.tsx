@@ -23,7 +23,6 @@ import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { updateScheduleItemStatus } from "@/app/(with_layout)/plans/[planId]/_actions";
 import { toast } from "@/hooks/use-toast";
-import { handleAddItemToReadList } from "@/app/(with_layout)/bible-tracker/_actions";
 
 type Props = {
   plan: UserPlan;
@@ -57,7 +56,11 @@ export default function PlanCalendarView({ plan }: Props) {
       index: goalIndex,
     });
     startUpdatingScheduleItem(async () => {
-      await updateScheduleItemStatus({ scheduleId, items: schedule });
+      await updateScheduleItemStatus({
+        scheduleId,
+        items: schedule,
+        goalIndex,
+      });
       setUpdatingIndex(null);
       const pendingItems = schedule.items?.some(
         (goal) => goal.status === "PENDING"
@@ -65,16 +68,13 @@ export default function PlanCalendarView({ plan }: Props) {
       if (!pendingItems) {
         toast({
           title: "Complete",
-          description: "Today's plans are complete",
+          description: `Plans for ${format(
+            schedule.date,
+            "MMMM do"
+          )} are complete`,
         });
       }
     });
-    // add to read list
-    const [bookName, chapter, ...others] =
-      schedule.items[goalIndex].goal.split(" ");
-    if (!others.length && !isNaN(parseInt(chapter, 10))) {
-      handleAddItemToReadList(bookName, parseInt(chapter, 10));
-    }
   }
 
   useEffect(() => {
@@ -174,19 +174,21 @@ export default function PlanCalendarView({ plan }: Props) {
   );
 }
 
+type CalendarViewItemProps = {
+  item: ScheduleItem;
+  index: number;
+  scheduleId: string;
+  // eslint-disable-next-line no-unused-vars
+  onChange: (scheduleId: string, goalIndex: number, checked: boolean) => void;
+  isUpdating: boolean;
+};
 function CalendarViewItem({
   item,
   onChange,
   scheduleId,
   index,
   isUpdating,
-}: {
-  item: ScheduleItem;
-  index: number;
-  scheduleId: string;
-  onChange: (scheduleId: string, goalIndex: number, checked: boolean) => void;
-  isUpdating: boolean;
-}) {
+}: CalendarViewItemProps) {
   return (
     <div className='flex gap-2 items-center'>
       {isUpdating ? (

@@ -42,6 +42,7 @@ export async function handleAddItemToReadList(book: string, chapter: number) {
   const foundChapter = progress.findIndex(
     (progressItem) => progressItem.chapter === chapter
   );
+  //if it's not found it means that it is not read, so add it
   if (foundChapter === -1) {
     const dataToPass: MarkChapterBook = {
       id: data[0]?.id,
