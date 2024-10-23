@@ -66,7 +66,7 @@ async function Page() {
   const fullStats = { chapters, books };
   return (
     <div>
-      <BackButton />
+      <BackButton href='/home' />
       <div className='py-5'>
         <h1 className='text-sm xxs:text-xl xs:text-2xl'>Bible Tracker</h1>
       </div>
