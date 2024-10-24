@@ -127,11 +127,11 @@ const drawerItems = [
     label: "My Plans",
     to: "/plans",
   },
-  {
-    icon: <User className='size-5' />,
-    label: "Profile",
-    to: "/profile",
-  },
+  // {
+  //   icon: <User className='size-5' />,
+  //   label: "Profile",
+  //   to: "/profile",
+  // },
   {
     icon: <BookOpenCheck className='size-5' />,
     label: "Bible Tracker",
