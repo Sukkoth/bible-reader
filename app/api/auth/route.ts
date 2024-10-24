@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get("next") ?? "/";
+  const redirectTo = searchParams.get("to");
 
   if (code) {
     const supabase = createClient();
@@ -16,11 +17,17 @@ export async function GET(request: Request) {
       const isLocalEnv = process.env.NODE_ENV === "development";
       if (isLocalEnv) {
         // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-        return NextResponse.redirect(`${origin}${next}/home`);
+        return NextResponse.redirect(
+          `${origin}${next}/${redirectTo || "home"}`
+        );
       } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}/home`);
+        return NextResponse.redirect(
+          `https://${forwardedHost}${next}/${redirectTo || "home"}`
+        );
       } else {
-        return NextResponse.redirect(`${origin}${next}/home`);
+        return NextResponse.redirect(
+          `${origin}${next}/${redirectTo || "home"}`
+        );
       }
     }
   }

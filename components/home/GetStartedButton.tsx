@@ -7,7 +7,7 @@ function GetStartedButton() {
   const router = useRouter();
   return (
     <Button className='mt-5' size={"lg"} onClick={() => router.push("/home")}>
-      Let&apos;s get started
+      Get started
     </Button>
   );
 }
