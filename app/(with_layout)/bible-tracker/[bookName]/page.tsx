@@ -6,16 +6,22 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import React from "react";
 
-type Props = {
-  params: { bookName: string };
-};
-
-type Progress = Pick<BookProgress, "progress">;
-
 export const metadata: Metadata = {
   title: "Bible Reader | Tracker",
   description: "Track your bible reading progress.",
 };
+
+//generate bookName params since they are already known
+export async function generateStaticParams() {
+  return books.map((book) => ({
+    bookName: book.book,
+  }));
+}
+
+type Props = {
+  params: { bookName: string };
+};
+type Progress = Pick<BookProgress, "progress">;
 
 async function Page({ params }: Props) {
   const bookName = params.bookName.replace("%20", " ");
