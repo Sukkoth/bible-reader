@@ -134,6 +134,7 @@ export default function CompleteProfile({ user, profile }: Props) {
       setGender(profile.gender === "male" ? "male" : "female");
       setValue("gender", profile.gender === "male" ? "male" : "female");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, profile?.id]);
 
   return (

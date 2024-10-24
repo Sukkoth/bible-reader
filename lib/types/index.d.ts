@@ -1,5 +1,4 @@
 import { PushSubscription } from "web-push";
-import { string } from "zod";
 
 declare global {
   declare type ScheduleStatus = "PENDING" | "COMPLETED";

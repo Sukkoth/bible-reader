@@ -1,6 +1,5 @@
 import BackButton from "@/components/BackButton";
 import BibleTracker from "@/components/BibleTracker";
-import ResetStatsButton from "@/components/BibleTracker/ResetStatsButton";
 import { books as bibleBooks } from "@/lib/bible_books_list";
 import {
   GET_BOOKS_PROGRESS,
@@ -36,7 +35,7 @@ async function Page() {
     } else if (index >= 39) {
       newTestamentItems.push(book);
     } else {
-      console.log(book.book, " is not assignable to categories");
+      console.error(book.book, " is not assignable to categories");
     }
   });
 
@@ -77,9 +76,6 @@ async function Page() {
         <h1 className='text-sm xxs:text-xl xs:text-2xl'>Bible Tracker</h1>
       </div>
       <BibleTracker completed={completedBooks} stats={fullStats} />
-      <div className='mt-5'>
-        <ResetStatsButton />
-      </div>
     </div>
   );
 }

@@ -22,7 +22,7 @@ function ListBooks({ displaying, completed }: Props) {
         return (
           <div className='my-3' key={category}>
             <h1>{category}</h1>
-            <div className='grid grid-cols-2 xs:grid-cols-4 sm:grid-cols-5 gap-3 py-3'>
+            <div className='grid grid-cols-3 xxs:grid-cols-5 sm:grid-cols-6 gap-2 py-2'>
               {books.map((book) => {
                 return (
                   <Button
@@ -31,7 +31,7 @@ function ListBooks({ displaying, completed }: Props) {
                       completed.includes(book.book) ? "default" : "secondary"
                     }
                     key={book.book}
-                    className='size-20 text-xs px-3 hover:scale-110 duration-500 transition-transform'
+                    className='w-full h-full aspect-square text-xs px-3 hover:scale-110 duration-500 transition-transform'
                   >
                     {book.bookShort}
                   </Button>

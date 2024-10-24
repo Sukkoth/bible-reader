@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import React from "react";
 import Stats from "./Stats";
 import { useSearchParams } from "next/navigation";
+import ResetStatsButton from "./ResetStatsButton";
 
 type StatItemProp = {
   oldTestament: number;
@@ -35,10 +36,19 @@ function BibleTracker({ completed, stats }: Props) {
       <MenuToggle displaying={displaying} />
       <Separator className='my-5' />
       {/*displaying === stats => list stats */}
-      {displaying === "stats" && <Stats stats={stats} />}
+      {displaying === "stats" && (
+        <>
+          <Stats stats={stats} />
+          <div className='mt-5'>
+            <ResetStatsButton />
+          </div>
+        </>
+      )}
       {/* displaying === [old, new] => list books based on 'displayng' */}
       {displaying !== "stats" && (
-        <ListBooks displaying={displaying} completed={completed} />
+        <>
+          <ListBooks displaying={displaying} completed={completed} />
+        </>
       )}
     </div>
   );
