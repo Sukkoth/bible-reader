@@ -1,13 +1,13 @@
-import { spartanFont } from "@/lib/fonts";
+import { interFont } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
 
 function Benefits() {
   return (
-    <section className='xl:w-2/3 mx-auto min-h-full'>
+    <section className='xl:w-2/3 mx-auto min-h-full pt-20' id='benefits'>
       <h1
-        className={`text-3xl xs:text-4xl lg:text-7xl font-bold text-white text-center mb-10`}
+        className={`text-3xl xs:text-4xl lg:text-7xl font-bold text-white text-center mb-10 ${interFont.className}`}
       >
         Benefits
       </h1>
@@ -19,12 +19,12 @@ function Benefits() {
           key={benefit.title}
         >
           <div className='w-1/2 md:w-1/2 p-3 flex justify-center flex-col'>
-            <h1 className='text-xl sm:text-3xl lg:text-5xl md:w-2/3'>
+            <h1
+              className={`text-xl sm:text-3xl lg:text-5xl md:w-2/3  ${interFont.className}`}
+            >
               {benefit.title}
             </h1>
-            <p
-              className={`${spartanFont.className} text-stone-400 md:w-2/3 mt-5 text-lg`}
-            >
+            <p className={`text-stone-400 md:w-2/3 mt-5 text-sm`}>
               {benefit.description}
             </p>
           </div>

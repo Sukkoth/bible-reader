@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import type { Metadata } from "next";
 import "./globals.css";
 import { spaceFont } from "@/lib/fonts";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Bible Reader",
@@ -54,6 +55,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

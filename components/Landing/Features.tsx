@@ -8,11 +8,14 @@ import {
   PlusCircle,
   Settings,
 } from "lucide-react";
+import { interFont } from "@/lib/fonts";
 
 function Features() {
   return (
-    <section className='text-center mb-48'>
-      <h1 className={`text-3xl xs:text-4xl lg:text-7xl font-bold text-white`}>
+    <section className='text-center mb-48 pt-20' id='features'>
+      <h1
+        className={`text-3xl xs:text-4xl lg:text-7xl font-bold text-white ${interFont.className}`}
+      >
         Features
       </h1>
       <div className='lg:w-2/3 px-10 mx-auto grid grid-cols-1 max-w-[450px] sm:max-w-max sm:grid-cols-2 md:grid-cols-3 gap-10 mt-10'>

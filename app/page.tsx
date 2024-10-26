@@ -5,7 +5,8 @@ import Features from "@/components/Landing/Features";
 import { interFont } from "@/lib/fonts";
 import { GET_USER } from "@/utils/supabase/services";
 import { redirect } from "next/navigation";
-import LearnMore from "@/components/Landing/LearnMore";
+import Contact from "@/components/Landing/Contact";
+import Nav from "@/components/Landing/Nav";
 
 export default async function Home() {
   const authData = await GET_USER({
@@ -16,12 +17,15 @@ export default async function Home() {
     redirect("/home");
   }
   return (
-    <main className={`h-full w-full overflow-y-scroll ${interFont.className}`}>
+    <main className={`h-full w-full overflow-y-scroll `}>
       <div className='absolute inset-0 -z-10 h-full w-full bg-stone-800/10 bg-[linear-gradient(to_right,#27bc591c_1px,transparent_1px),linear-gradient(to_bottom,#27bc591c_1px,transparent_1px)] bg-[size:6rem_4rem]'>
         <div className='absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#8bc0915f,transparent)]'></div>
       </div>
-      <section className='center-all flex-col h-full relative'>
-        <h1 className={`text-4xl xs:text-6xl lg:text-8xl font-bold text-white`}>
+      <Nav />
+      <section className='center-all flex-col h-full relative' id='home'>
+        <h1
+          className={`text-4xl xs:text-6xl lg:text-8xl font-bold text-white ${interFont.className}`}
+        >
           Bible Reader
         </h1>
         <h2
@@ -32,11 +36,11 @@ export default async function Home() {
           faith.
         </h2>
         <GetStartedButton />
-        <LearnMore />
       </section>
       <Features />
       <Benefits />
       <FrequentQuestions />
+      <Contact />
     </main>
   );
 }

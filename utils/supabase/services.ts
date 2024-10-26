@@ -494,3 +494,23 @@ export async function RESET_BIBLE_READING_PROGRESS() {
 
   return { error };
 }
+
+export type ContactArgs = {
+  fullName: string;
+  email: string;
+  message: string;
+};
+export async function SAVE_MESSAGE(args: ContactArgs) {
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("contactMessages")
+    .insert(args)
+    .single();
+
+  if (error) {
+    return { error: error.message || "Could not send message!" };
+  }
+
+  return { error: null };
+}

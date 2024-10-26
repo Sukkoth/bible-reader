@@ -8,7 +8,11 @@ import { LoginSchema } from "@/lib/schemas/authSchema";
 import { Provider } from "@supabase/supabase-js";
 import { sendNotification } from "@/notifications/NotificationSender";
 import { PushSubscription } from "web-push";
-import { MARK_PLAN_AS_COMPLETE } from "@/utils/supabase/services";
+import {
+  ContactArgs,
+  MARK_PLAN_AS_COMPLETE,
+  SAVE_MESSAGE,
+} from "@/utils/supabase/services";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function login(prevState: any, formData: FormData) {
@@ -122,4 +126,12 @@ export async function markPlanAsComplete(planId: number) {
           : "Could not mark as complete on server",
     };
   }
+}
+
+export async function saveContactMessage(args: ContactArgs) {
+  const result = await SAVE_MESSAGE(args);
+  if (result?.error) {
+    return { error: result.error };
+  }
+  return { success: true };
 }

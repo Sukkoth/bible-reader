@@ -1,6 +1,5 @@
 "use client";
 
-import { spartanFont } from "@/lib/fonts";
 import { ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 
@@ -16,15 +15,15 @@ function FrequentQuestionItem({ question, answer }: Props) {
         className='inline-flex justify-between border-b p-3 pb-1 border-b-white/20 hover:border-b-white/40 text-lg w-full cursor-pointer'
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <h3 className='text-xl'>{question}</h3>
-        <ChevronDown className={`${isOpen ? "rotate-180" : ""} size-4`} />
+        <h3>{question}</h3>
+        <ChevronDown
+          className={`${
+            isOpen ? "rotate-180" : ""
+          } size-4 transition-transform duration-300`}
+        />
       </div>
       {isOpen && (
-        <p
-          className={`${spartanFont.className} ms-4 text-lg px-3 mt-2 border-s-2 rounded-b-lg border-s-[#8bc0915f] border-b-4 border-b-[#8bc0915f]`}
-        >
-          {answer}
-        </p>
+        <p className={`ms-4 text-sm px-3 mt-2 text-stone-400`}>{answer}</p>
       )}
     </div>
   );
