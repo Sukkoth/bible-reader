@@ -15,7 +15,7 @@ function FrequentQuestionItem({ question, answer }: Props) {
         className='inline-flex justify-between border-b p-3 pb-1 border-b-white/20 hover:border-b-white/40 text-lg w-full cursor-pointer'
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <h3>{question}</h3>
+        <h3 className='text-white'>{question}</h3>
         <ChevronDown
           className={`${
             isOpen ? "rotate-180" : ""

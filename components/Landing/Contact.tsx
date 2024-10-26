@@ -60,10 +60,10 @@ function Contact() {
         onSubmit={handleSubmit}
       >
         <div className='space-y-2'>
-          <Label>Full Name</Label>
+          <Label className='text-white'>Full Name</Label>
           <Input
             type='text'
-            className='border-white/50 bg-card/50'
+            className='border-white/50 text-white bg-landing-card/50'
             required
             value={formData.fullName}
             onChange={(e) =>
@@ -72,10 +72,10 @@ function Contact() {
           />
         </div>
         <div className='space-y-2'>
-          <Label>Email</Label>
+          <Label className='text-white'>Email</Label>
           <Input
             type='email'
-            className='border-white/50 bg-card/50'
+            className='border-white/50 text-white bg-landing-card/50'
             required
             value={formData.email}
             onChange={(e) =>
@@ -84,9 +84,9 @@ function Contact() {
           />
         </div>
         <div className='space-y-2'>
-          <Label>Message</Label>
+          <Label className='text-white'>Message</Label>
           <Textarea
-            className='border-white/50 bg-card/50'
+            className='border-white/50 text-white bg-landing-card/50'
             rows={10}
             required
             value={formData.message}
@@ -97,7 +97,7 @@ function Contact() {
         </div>
         <div className='w-1/3 mx-auto'>
           <Button
-            className='h-12 w-full bg-card/50 border border-white mt-5 hover:bg-stone-500/30 transition-all duration-500'
+            className='h-12 w-full bg-landing-card/50 border border-white mt-5 hover:bg-stone-500/30 transition-all duration-500'
             size={"lg"}
             disabled={isPending}
           >

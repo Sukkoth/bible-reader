@@ -14,6 +14,7 @@ const config: Config = {
         xs: "400px",
       },
       colors: {
+        "landing-card": "hsl(var(--landing-card))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

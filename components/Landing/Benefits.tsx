@@ -20,7 +20,7 @@ function Benefits() {
         >
           <div className='w-1/2 md:w-1/2 p-3 flex justify-center flex-col'>
             <h1
-              className={`text-xl sm:text-3xl lg:text-5xl md:w-2/3  ${interFont.className}`}
+              className={`text-xl sm:text-3xl lg:text-5xl md:w-2/3 text-white ${interFont.className}`}
             >
               {benefit.title}
             </h1>
