@@ -219,18 +219,28 @@ export async function GET_PLAN_SCHEDULE(scheduleId: number) {
   return data as UserPlan;
 }
 
-export async function GET_PLANS(userId: string) {
+export async function GET_PLANS(userId: string, filter: string) {
   const supabase = createClient();
-
-  const { data, error } = await supabase
+  let query = supabase
     .from("userPlans")
     .select("*, plans(*), schedules(*)")
-    .order("id", { referencedTable: "schedules" })
-    .order("completedAt", {
-      nullsFirst: true,
-    }) //display completedAt = null plans first
+    .eq("userId", userId)
+    .order("id", { referencedTable: "schedules" });
 
-    .eq("userId", userId);
+  if (filter === "In Progress") {
+    query = query.is("completedAt", null);
+  } else if (filter === "Paused") {
+    query = query.not("pausedAt", "is", null);
+  } else if (filter === "Completed") {
+    query = query.not("completedAt", "is", null);
+  } else {
+    //All
+    query = query.order("completedAt", {
+      nullsFirst: true,
+    }); //display completedAt = null plans first
+  }
+
+  const { data, error } = await query;
   if (error) {
     throw new Error(error.message || "Something went wrong");
   }
@@ -268,11 +278,14 @@ export async function GET_TODAYS_PLANS(userId: string) {
     .select("*, plans(*), schedules(*)")
     .eq("userId", userId)
     .is("completedAt", null)
-    .eq("schedules.date", format(new Date(), "yyyy-MM-dd"));
+    .eq("schedules.date", format(new Date(), "yyyy-MM-dd"))
+    .is("pausedAt", null);
 
   if (error) {
     throw new Error(error.message || "Something went wrong");
   }
+
+  console.log(data);
 
   return (data as UserPlan[])?.filter(
     (dataItem) => dataItem.schedules.length > 0
@@ -291,6 +304,38 @@ export async function MARK_PLAN_AS_COMPLETE(userPlanId: number) {
     throw new Error(error?.message || "Something went wrong");
   }
   return data;
+}
+
+type CatchUpArgs = {
+  daysToAdd: number;
+  lastInCompleteDate: string;
+  scheduleId: number;
+};
+
+export async function CATCHUP_SCHEDULE(args: CatchUpArgs) {
+  const supabase = createClient();
+
+  const { error } = await supabase.rpc("rescheduleforcatchup", {
+    daystoadd: args.daysToAdd,
+    lastincompletedate: args.lastInCompleteDate,
+    scheduleid: args.scheduleId,
+  });
+
+  if (!error) {
+    await supabase.rpc("extend_user_plan", {
+      userplanid: args.scheduleId,
+      daystoadd: args.daysToAdd,
+    });
+  }
+
+  if (error)
+    return {
+      error: error.message,
+    };
+
+  return {
+    success: true,
+  };
 }
 
 //* TEMPLATES

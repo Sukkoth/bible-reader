@@ -1,14 +1,20 @@
 import BackButton from "@/components/BackButton";
+import FilterMenu from "@/components/plans/FilterMenu";
 import PlansItem from "@/components/PlansItem";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
 import { GET_PLANS, GET_USER } from "@/utils/supabase/services";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { isPast } from "date-fns";
 import Link from "next/link";
 
-async function Plans() {
+type Props = {
+  searchParams: { filter: string };
+};
+async function Plans({ searchParams }: Props) {
+  const filter = searchParams.filter || "In Progress";
   const { user } = await GET_USER();
-  const plans = await GET_PLANS(user!.id);
+  const plans = await GET_PLANS(user!.id, filter);
 
   return (
     <div>
@@ -17,6 +23,8 @@ async function Plans() {
         <h1 className='text-sm xxs:text-xl xs:text-2xl'>Your Plans</h1>
       </div>
       <div>
+        <FilterMenu />
+        <Separator className='my-3' />
         {plans?.map((plan, index) => {
           const completed = plan.schedules
             .map((schedule) => schedule.items)
