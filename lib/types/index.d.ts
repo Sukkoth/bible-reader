@@ -38,7 +38,6 @@ declare global {
     goal: string;
     notes: string;
     status: ScheduleStatus;
-    completedAt?: string;
   }
 
   // Schedule interface
@@ -63,6 +62,7 @@ declare global {
     userMade: boolean;
     customizable: boolean;
     completedAt: Date;
+    pausedAt: Date;
     plans: Plan;
   }
 

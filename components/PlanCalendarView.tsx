@@ -26,8 +26,9 @@ import { toast } from "@/hooks/use-toast";
 
 type Props = {
   plan: UserPlan;
+  indexToShow: null | number;
 };
-export default function PlanCalendarView({ plan }: Props) {
+export default function PlanCalendarView({ plan, indexToShow }: Props) {
   const today = new Date();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(
@@ -35,7 +36,7 @@ export default function PlanCalendarView({ plan }: Props) {
       ? 0
       : isPast(plan.endDate)
       ? plan.schedules.length - 1
-      : differenceInCalendarDays(today, plan.startDate)
+      : indexToShow ?? differenceInCalendarDays(today, plan.startDate)
   );
   const [selectedDate, setSelectedDate] = useState(current);
   const [isUpdatingScheduleItem, startUpdatingScheduleItem] = useTransition();
@@ -157,6 +158,7 @@ export default function PlanCalendarView({ plan }: Props) {
         {plan.schedules[selectedDate] &&
           plan.schedules[selectedDate].items.map((item, index) => (
             <CalendarViewItem
+              disabled={!!plan.pausedAt}
               key={item.goal}
               scheduleId={plan.schedules[selectedDate].id}
               index={index}
@@ -178,6 +180,7 @@ type CalendarViewItemProps = {
   item: ScheduleItem;
   index: number;
   scheduleId: string;
+  disabled: boolean;
   // eslint-disable-next-line no-unused-vars
   onChange: (scheduleId: string, goalIndex: number, checked: boolean) => void;
   isUpdating: boolean;
@@ -188,6 +191,7 @@ function CalendarViewItem({
   scheduleId,
   index,
   isUpdating,
+  disabled,
 }: CalendarViewItemProps) {
   return (
     <div className='flex gap-2 items-center'>
@@ -195,6 +199,7 @@ function CalendarViewItem({
         <Loader2 className='animate-spin size-4' />
       ) : (
         <Checkbox
+          disabled={disabled}
           id={item.goal}
           className='cursor-pointer border-gray-500 data-[state=checked]:bg-gray-500 dark:border-white dark:data-[state=checked]:bg-white'
           defaultChecked={item.status === "COMPLETED"}

@@ -25,6 +25,7 @@ import { notFound } from "next/navigation";
 import Confetti from "@/components/Confetti";
 import { spartanFont } from "@/lib/fonts";
 import { Metadata } from "next";
+import { PlanDetailMenu } from "@/components/PlanDetailMenu";
 
 export const metadata: Metadata = {
   title: "Bible Reader | Plan",
@@ -41,9 +42,31 @@ async function Plan({ params }: { params: { planId: string } }) {
   }
 
   const target = plan.totalChapters;
+  const today = format(new Date(), "yyyy-MM-dd");
+  let indexToShow: number | null = null;
+
+  let lastIncompletedDate: string | null = null; //date string
 
   const progress = plan.schedules
-    .map((schedule) => schedule.items)
+    .map((schedule, index) => {
+      //get last incomplete date
+      //if the date is in the past, not same with today, has PENDING items
+      //required for catch up
+      if (
+        !lastIncompletedDate &&
+        schedule.items.some((item) => item.status === "PENDING") &&
+        isPast(schedule.date) &&
+        today !== schedule.date
+      )
+        lastIncompletedDate = schedule.date;
+      //return the schedule items
+
+      //determine which index to show when user first navigates
+      if (schedule.date === today) {
+        indexToShow = index;
+      }
+      return schedule.items;
+    })
     .flat(2)
     .filter((schedule) => schedule.status === "COMPLETED").length;
 
@@ -82,8 +105,8 @@ async function Plan({ params }: { params: { planId: string } }) {
         },
         {
           icon: <CalendarDays className='size-5' />,
-          header: "Per Week",
-          subText: `${plan.perDay * 7} Sessions `,
+          header: "Total",
+          subText: `${plan.schedules.length} Sessions`,
         },
       ]
     );
@@ -91,7 +114,13 @@ async function Plan({ params }: { params: { planId: string } }) {
 
   return (
     <div>
-      <BackButton />
+      <div className='flex justify-between items-center'>
+        <BackButton />
+        <PlanDetailMenu
+          scheduleId={plan.id}
+          lastInCompleteDate={lastIncompletedDate}
+        />
+      </div>
       <div className='pt-5'>
         <h1 className={`text-2xl xs:text-4xl ${spartanFont.className}`}>
           {plan.plans.name}
@@ -127,6 +156,13 @@ async function Plan({ params }: { params: { planId: string } }) {
             ))}
           </div>
           <Separator className='my-5' />
+          {plan.pausedAt && (
+            <Alert className='mt-5 shadow-md bg-transparent mb-5'>
+              <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />
+              <AlertTitle className='font-bold'>Plan Paused!</AlertTitle>
+              <AlertDescription>This plan is paused</AlertDescription>
+            </Alert>
+          )}
           {isPast(plan.endDate) && (
             <Alert className='mt-5 shadow-md bg-transparent mb-5'>
               <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />
@@ -136,8 +172,8 @@ async function Plan({ params }: { params: { planId: string } }) {
               </AlertDescription>
             </Alert>
           )}
-          <PlanCalendarView {...{ plan }} />{" "}
-          {/* you could have mane plan={plan} WHY? just to confuse myself :) */}
+          <PlanCalendarView {...{ plan }} indexToShow={indexToShow} />{" "}
+          {/* you could have made plan={plan} WHY? just to confuse myself :) */}
           <Separator className='my-5' />
           <DeleteSchedule userPlanId={plan.id} />
         </CardContent>

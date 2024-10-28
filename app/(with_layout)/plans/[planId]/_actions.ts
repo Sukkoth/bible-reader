@@ -1,12 +1,14 @@
 "use server";
 import { parseBookAndChapterFromGoal } from "@/utils/parseBookAndChapterFromGoal";
 import {
+  CATCHUP_SCHEDULE,
   DELETE_USER_PLAN,
   MarkPlanGoalData,
   UPDATE_SCHEDULE_ITEM_STATUS,
 } from "@/utils/supabase/services";
 import { revalidatePath } from "next/cache";
 import { handleAddItemToReadList } from "../../bible-tracker/_actions";
+import { differenceInCalendarDays } from "date-fns";
 
 type GoalDataArgs = MarkPlanGoalData & { goalIndex: number };
 export async function updateScheduleItemStatus(goalData: GoalDataArgs) {
@@ -52,4 +54,27 @@ export async function deleteUserPlan(scheduleId: number) {
       message: "Could not delete plan",
     };
   }
+}
+
+export async function catchupPlanSchedule(
+  scheduleId: number,
+  lastInCompleteDate: string,
+  daysToAdd: number
+) {
+  const result = await CATCHUP_SCHEDULE({
+    daysToAdd,
+    lastInCompleteDate,
+    scheduleId,
+  });
+
+  if (result.success) {
+    revalidatePath(`/plans/${scheduleId}`);
+    return {
+      success: true,
+    };
+  }
+
+  return {
+    error: "Something went Wrong",
+  };
 }
