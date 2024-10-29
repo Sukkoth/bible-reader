@@ -4,11 +4,11 @@ import {
   CATCHUP_SCHEDULE,
   DELETE_USER_PLAN,
   MarkPlanGoalData,
+  PAUSE_PLAN,
   UPDATE_SCHEDULE_ITEM_STATUS,
 } from "@/utils/supabase/services";
 import { revalidatePath } from "next/cache";
 import { handleAddItemToReadList } from "../../bible-tracker/_actions";
-import { differenceInCalendarDays } from "date-fns";
 
 type GoalDataArgs = MarkPlanGoalData & { goalIndex: number };
 export async function updateScheduleItemStatus(goalData: GoalDataArgs) {
@@ -77,4 +77,15 @@ export async function catchupPlanSchedule(
   return {
     error: "Something went Wrong",
   };
+}
+
+export async function pausePlan(scheduleId: number, pause: boolean) {
+  const result = await PAUSE_PLAN(scheduleId, pause);
+  if (result?.error) {
+    return {
+      error: result?.error || "Could not pause this plan",
+    };
+  }
+  revalidatePath(`/plans/${scheduleId}`);
+  return result;
 }

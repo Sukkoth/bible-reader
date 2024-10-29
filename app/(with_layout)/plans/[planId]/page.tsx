@@ -119,6 +119,7 @@ async function Plan({ params }: { params: { planId: string } }) {
         <PlanDetailMenu
           scheduleId={plan.id}
           lastInCompleteDate={lastIncompletedDate}
+          planPaused={!!plan.pausedAt}
         />
       </div>
       <div className='pt-5'>

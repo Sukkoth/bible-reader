@@ -1,7 +1,7 @@
 import { LoginSchemaType } from "@/lib/schemas/authSchema";
 import { CompleteProfileSchemaType } from "@/lib/schemas/completeProfileSchema";
 import { CreatePlanSchemaType } from "@/lib/schemas/createPlanSchema";
-import { format } from "date-fns";
+import { differenceInCalendarDays, format, isPast } from "date-fns";
 import { createClient } from "./server";
 import { redirect } from "next/navigation";
 
@@ -228,7 +228,7 @@ export async function GET_PLANS(userId: string, filter: string) {
     .order("id", { referencedTable: "schedules" });
 
   if (filter === "In Progress") {
-    query = query.is("completedAt", null);
+    query = query.is("completedAt", null).is("pausedAt", null);
   } else if (filter === "Paused") {
     query = query.not("pausedAt", "is", null);
   } else if (filter === "Completed") {
@@ -336,6 +336,61 @@ export async function CATCHUP_SCHEDULE(args: CatchUpArgs) {
   return {
     success: true,
   };
+}
+
+export async function PAUSE_PLAN(scheduleId: number, pause: boolean) {
+  const supabase = createClient();
+  const pauseAt = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Africa/Nairobi" })
+  );
+
+  //fetch the plan to determine if it needs catchup
+  //you know that by reading pausedAt field
+  //if it has a past date it needs catch up, if not, it doesn't.
+  const { data: plan, error: fetchPlanerror } = await supabase
+    .from("userPlans")
+    .select("*")
+    .eq("id", scheduleId)
+    .single();
+  if (fetchPlanerror) {
+    return {
+      error: fetchPlanerror.message,
+    };
+  }
+
+  //catch up plan
+  if (
+    !pause &&
+    isPast(plan.pausedAt) &&
+    format(pauseAt, "yyyy-MM-dd") !== plan.pausedAt
+  ) {
+    const daysToAdd = differenceInCalendarDays(pauseAt, plan.pausedAt);
+    const lastInCompleteDate = plan.pausedAt;
+    const result = await CATCHUP_SCHEDULE({
+      daysToAdd,
+      lastInCompleteDate,
+      scheduleId,
+    });
+    if (result.error) {
+      return {
+        error: result.error,
+      };
+    }
+  }
+
+  //then remove pausedAt
+  const { error } = await supabase
+    .from("userPlans")
+    .update({ pausedAt: pause ? pauseAt : null })
+    .eq("id", scheduleId)
+    .single();
+
+  if (error) {
+    return {
+      error: error.message,
+    };
+  }
+  return { success: true };
 }
 
 //* TEMPLATES

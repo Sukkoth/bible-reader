@@ -14,17 +14,27 @@ import { EllipsisVertical } from "lucide-react";
 import { useState } from "react";
 import CatchUpPlan from "./CatchUpPlan";
 import { differenceInCalendarDays } from "date-fns";
+import PausePlan from "./PausePlan";
 
 type Props = {
   scheduleId: number;
   lastInCompleteDate: string | null;
+  planPaused: boolean;
 };
 
-export function PlanDetailMenu({ scheduleId, lastInCompleteDate }: Props) {
+export function PlanDetailMenu({
+  scheduleId,
+  lastInCompleteDate,
+  planPaused,
+}: Props) {
   const [showCatchupModal, setShowCatchupModal] = useState(false);
+  const [showPauseModal, setShowPauseModal] = useState(false);
 
   function handleCatchupModal(open: boolean) {
     setShowCatchupModal(open);
+  }
+  function handlePauseModal(open: boolean) {
+    setShowPauseModal(open);
   }
 
   const daysToAdd = lastInCompleteDate
@@ -48,9 +58,11 @@ export function PlanDetailMenu({ scheduleId, lastInCompleteDate }: Props) {
                 Catchup Plan
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem>Pause Plan</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handlePauseModal(true)}>
+              {planPaused ? "Resume Plan" : "Pause Plan"}
+            </DropdownMenuItem>
 
-            <DropdownMenuItem>Update</DropdownMenuItem>
+            {/* <DropdownMenuItem>Update</DropdownMenuItem> */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
         </DropdownMenuContent>
@@ -64,6 +76,13 @@ export function PlanDetailMenu({ scheduleId, lastInCompleteDate }: Props) {
           daysToAdd={daysToAdd!}
         />
       )}
+
+      <PausePlan
+        modalOpen={showPauseModal}
+        handleOpenChange={handlePauseModal}
+        scheduleId={scheduleId}
+        planPaused={planPaused}
+      />
     </>
   );
 }
