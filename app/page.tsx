@@ -7,6 +7,7 @@ import { GET_USER } from "@/utils/supabase/services";
 import { redirect } from "next/navigation";
 import Contact from "@/components/Landing/Contact";
 import Nav from "@/components/Landing/Nav";
+import Image from "next/image";
 
 export default async function Home() {
   const authData = await GET_USER({
@@ -23,6 +24,13 @@ export default async function Home() {
       </div>
       <Nav />
       <section className='center-all flex-col h-full relative' id='home'>
+        <Image
+          src='/transparent.png'
+          alt='icon'
+          width={130}
+          height={130}
+          className='invert'
+        />
         <h1
           className={`text-4xl xs:text-6xl lg:text-8xl font-bold text-white ${interFont.className}`}
         >

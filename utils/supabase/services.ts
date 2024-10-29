@@ -285,8 +285,6 @@ export async function GET_TODAYS_PLANS(userId: string) {
     throw new Error(error.message || "Something went wrong");
   }
 
-  console.log(data);
-
   return (data as UserPlan[])?.filter(
     (dataItem) => dataItem.schedules.length > 0
   );

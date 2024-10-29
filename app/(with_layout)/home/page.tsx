@@ -71,7 +71,7 @@ async function Home() {
         <h1 className='text-sm xxs:text-xl xs:text-2xl'>
           {format(new Date(), "MMMM, y")}
         </h1>
-        <div className='grid grid-cols-4 xxs:grid-cols-6 xs:grid-cols-8 max-w-[600px] gap-2 pt-3'>
+        <div className='grid grid-cols-4 xxs:grid-cols-6 xs:grid-cols-8 max-w-[600px] gap-1 pt-3 select-none'>
           <DailyStats mapped={mapped} />
         </div>
         {/* <p className='pt-2'>
@@ -84,6 +84,7 @@ async function Home() {
             Today&apos;s plans
           </h1>
           <Link
+            prefetch
             href='plans'
             className='text-stone-400 text-xs hover:underline cursor-pointer'
           >
