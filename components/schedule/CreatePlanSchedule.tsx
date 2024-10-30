@@ -48,7 +48,7 @@ import useFetch from "@/hooks/useFetch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { useAptabase } from "@aptabase/react";
+import { trackEvent } from "@/utils/trackEvent";
 
 type Props = {
   showBooks: boolean;
@@ -70,7 +70,6 @@ function CreatePlanSchedule(args: Props) {
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [chapterCount, setChapterCount] = useState(args.perDay);
-  const { trackEvent } = useAptabase();
 
   /**
    * when you first this platform, you might already had a reading plan you were following

@@ -3,8 +3,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { spaceFont } from "@/lib/fonts";
 import { Toaster } from "@/components/ui/toaster";
-import { AptabaseProvider } from "@aptabase/react";
-import Head from "next/head";
 import Script from "next/script";
 
 export const metadata: Metadata = {
@@ -56,17 +54,15 @@ export default function RootLayout({
       <body
         className={`${spaceFont.className} antialiased h-[100dvh] overflow-x-hidden`}
       >
-        <AptabaseProvider appKey={process.env.APTABASE_KEY!}>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='dark'
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </AptabaseProvider>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='dark'
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

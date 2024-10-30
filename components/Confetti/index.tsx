@@ -10,6 +10,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import ReactConfetti from "react-confetti";
 import { markPlanAsComplete } from "@/actions";
 import { toast } from "@/hooks/use-toast";
+import { trackEvent } from "@/utils/trackEvent";
 
 export default function Confetti({ planId, progress, target }: Props) {
   const { width, height } = useWindowSize();
@@ -25,6 +26,7 @@ export default function Confetti({ planId, progress, target }: Props) {
         const { success } = await handleComplete();
         if (success) {
           setShowConfetti(true);
+          trackEvent("plan-complete", { planId });
         } else {
           toast({
             variant: "destructive",

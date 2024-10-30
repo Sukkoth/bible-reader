@@ -23,7 +23,7 @@ import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { updateScheduleItemStatus } from "@/app/(with_layout)/plans/[planId]/_actions";
 import { toast } from "@/hooks/use-toast";
-import { useAptabase } from "@aptabase/react";
+import { trackEvent } from "@/utils/trackEvent";
 
 type Props = {
   plan: UserPlan;
@@ -45,7 +45,6 @@ export default function PlanCalendarView({ plan, indexToShow }: Props) {
     scheduleId: string; //to prevent other schedule indexes from following the loading
     index: number; //the get the exact item
   } | null>(null);
-  const { trackEvent } = useAptabase();
 
   async function onChangeGoalStatus(
     scheduleId: string,
