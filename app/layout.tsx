@@ -4,7 +4,8 @@ import "./globals.css";
 import { spaceFont } from "@/lib/fonts";
 import { Toaster } from "@/components/ui/toaster";
 import { AptabaseProvider } from "@aptabase/react";
-import { Analytics } from "@vercel/analytics/react";
+import Head from "next/head";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Bible Reader",
@@ -47,6 +48,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
+      <Script
+        async
+        src='https://cloud.umami.is/script.js'
+        data-website-id='98e29232-8845-4562-812d-3e16611fbf17'
+      />
       <body
         className={`${spaceFont.className} antialiased h-[100dvh] overflow-x-hidden`}
       >
