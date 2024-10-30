@@ -49,7 +49,7 @@ export default function RootLayout({
       <Script
         async
         src='https://cloud.umami.is/script.js'
-        data-website-id='98e29232-8845-4562-812d-3e16611fbf17'
+        data-website-id='14a0d37a-e8d0-4705-8d80-14882bed6ce8'
       />
       <body
         className={`${spaceFont.className} antialiased h-[100dvh] overflow-x-hidden`}
