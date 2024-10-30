@@ -4,6 +4,7 @@ import "./globals.css";
 import { spaceFont } from "@/lib/fonts";
 import { Toaster } from "@/components/ui/toaster";
 import LogLib from "@loglib/tracker/react";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "Bible Reader",
@@ -52,9 +53,9 @@ export default function RootLayout({
         <LogLib
           config={{
             id: "biblereader",
-            consent: "granted",
           }}
         />
+        <Analytics />
         <ThemeProvider
           attribute='class'
           defaultTheme='dark'
