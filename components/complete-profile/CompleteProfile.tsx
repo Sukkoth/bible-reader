@@ -24,7 +24,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Loader } from "lucide-react";
 import { completeProfileAction } from "./_actions";
 import Image from "next/image";
-import { loglib } from "@loglib/tracker";
+import { useAptabase } from "@aptabase/react";
 
 type Props = {
   user: User;
@@ -39,6 +39,7 @@ export default function CompleteProfile({ user, profile }: Props) {
   const [uploading, setUploading] = useState(false); //for file
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const { trackEvent } = useAptabase();
 
   const {
     register,
@@ -53,7 +54,7 @@ export default function CompleteProfile({ user, profile }: Props) {
 
   const onSubmit: SubmitHandler<CompleteProfileSchemaType> = async (data) => {
     startTransition(async () => {
-      loglib.track("new-user", { id: `${data.firstName} ${data.lastName}` });
+      trackEvent("new-user", { id: `${data.firstName} ${data.lastName}` });
       const { error, id } = await completeProfileAction(
         user.id,
         data,

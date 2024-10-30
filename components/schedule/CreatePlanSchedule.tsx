@@ -48,7 +48,7 @@ import useFetch from "@/hooks/useFetch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { loglib } from "@loglib/tracker";
+import { useAptabase } from "@aptabase/react";
 
 type Props = {
   showBooks: boolean;
@@ -70,6 +70,7 @@ function CreatePlanSchedule(args: Props) {
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [chapterCount, setChapterCount] = useState(args.perDay);
+  const { trackEvent } = useAptabase();
 
   /**
    * when you first this platform, you might already had a reading plan you were following
@@ -187,10 +188,10 @@ function CreatePlanSchedule(args: Props) {
           markPreviousAsComplete: markPreviousAsComplete,
         });
       }
-      loglib.track("new-plan", {
-        planId,
+      trackEvent("new-plan", {
+        planId: planId as string,
         fromTemplate: !!args?.template,
-        planNameFromTemplate: args?.template?.plans?.name,
+        planNameFromTemplate: args?.template?.plans?.name || "no-template",
       });
       await handleAddPlanToDb.fetchData({
         body: JSON.stringify(parsedData),
