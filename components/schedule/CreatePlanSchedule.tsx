@@ -48,6 +48,7 @@ import useFetch from "@/hooks/useFetch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { loglib } from "@loglib/tracker";
 
 type Props = {
   showBooks: boolean;
@@ -186,6 +187,11 @@ function CreatePlanSchedule(args: Props) {
           markPreviousAsComplete: markPreviousAsComplete,
         });
       }
+      loglib.track("new-plan", {
+        planId,
+        fromTemplate: !!args?.template,
+        planNameFromTemplate: args?.template?.plans?.name,
+      });
       await handleAddPlanToDb.fetchData({
         body: JSON.stringify(parsedData),
         method: "post",

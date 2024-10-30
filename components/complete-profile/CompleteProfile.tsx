@@ -24,6 +24,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Loader } from "lucide-react";
 import { completeProfileAction } from "./_actions";
 import Image from "next/image";
+import { loglib } from "@loglib/tracker";
 
 type Props = {
   user: User;
@@ -52,6 +53,7 @@ export default function CompleteProfile({ user, profile }: Props) {
 
   const onSubmit: SubmitHandler<CompleteProfileSchemaType> = async (data) => {
     startTransition(async () => {
+      loglib.track("new-user", { id: `${data.firstName} ${data.lastName}` });
       const { error, id } = await completeProfileAction(
         user.id,
         data,
@@ -109,7 +111,6 @@ export default function CompleteProfile({ user, profile }: Props) {
   }, [hasCompletedProfile]);
 
   useEffect(() => {
-    console.log({ user, profile });
     if (user?.user_metadata?.avatar_url) {
       setValue("avatar", user?.user_metadata.avatar_url);
     } else if (user?.user_metadata?.picture) {

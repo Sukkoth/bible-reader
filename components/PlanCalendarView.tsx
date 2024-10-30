@@ -23,6 +23,7 @@ import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
 import { updateScheduleItemStatus } from "@/app/(with_layout)/plans/[planId]/_actions";
 import { toast } from "@/hooks/use-toast";
+import { loglib } from "@loglib/tracker";
 
 type Props = {
   plan: UserPlan;
@@ -74,6 +75,7 @@ export default function PlanCalendarView({ plan, indexToShow }: Props) {
             "MMMM do"
           )} are complete`,
         });
+        loglib.track("daily-schedule-complete", { id: scheduleId });
       }
     });
   }

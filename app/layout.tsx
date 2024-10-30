@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { spaceFont } from "@/lib/fonts";
 import { Toaster } from "@/components/ui/toaster";
+import LogLib from "@loglib/tracker/react";
 
 export const metadata: Metadata = {
   title: "Bible Reader",
@@ -48,6 +49,12 @@ export default function RootLayout({
       <body
         className={`${spaceFont.className} antialiased h-[100dvh] overflow-x-hidden`}
       >
+        <LogLib
+          config={{
+            id: "biblereader",
+            consent: "granted",
+          }}
+        />
         <ThemeProvider
           attribute='class'
           defaultTheme='dark'
