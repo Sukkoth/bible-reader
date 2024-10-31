@@ -17,7 +17,7 @@ function MenuToggle({ displaying }: Props) {
     router.push(`${window.location.pathname}?${newParams.toString()}`);
   };
   return (
-    <div className='grid grid-cols-3 p-3 pb-0'>
+    <div className='grid grid-cols-3 p-3 md:px-0 pb-0'>
       {menuItems.map((menu) => (
         <MenuToggleItem
           active={displaying === menu.set}

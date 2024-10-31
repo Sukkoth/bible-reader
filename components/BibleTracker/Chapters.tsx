@@ -66,7 +66,7 @@ function Chapters({ length, progress, book, id }: Props) {
 
   return (
     <div>
-      <div className='grid grid-cols-3 xxs:grid-cols-5 sm:grid-cols-6 gap-2'>
+      <div className='max-w-[650px] mx-auto grid grid-cols-3 xxs:grid-cols-5 sm:grid-cols-7 md:grid-cols-8 gap-2'>
         {Array.from({ length }, (_, index) => index + 1).map((chapter) => (
           <Button
             onClick={() => handleMark(chapter)}
@@ -89,7 +89,9 @@ function Chapters({ length, progress, book, id }: Props) {
         ))}
       </div>
       {progress.length < length && (
-        <MarkChaptersAsReadButton bookName={book} progressId={id} />
+        <div className='max-w-[650px] mx-auto'>
+          <MarkChaptersAsReadButton bookName={book} progressId={id} />
+        </div>
       )}
     </div>
   );

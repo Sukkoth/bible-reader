@@ -25,7 +25,7 @@ type Props = {
   useConfirmButton: ReactNode;
   pendingText?: string;
   open?: boolean;
-  onOpenChange: () => void;
+  onOpenChange?: () => void;
 };
 function AlertModal({
   title,

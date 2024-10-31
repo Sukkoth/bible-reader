@@ -27,7 +27,7 @@ function NewPlanItem({
   return (
     <Link
       href={`/schedule/${queryParam}`}
-      className='border my-3 border-stone-200 dark:border-stone-700 hover:bg-secondary/50 cursor-pointer px-2 py-2 rounded-xl flex items-center'
+      className='border border-stone-200 dark:border-stone-700 hover:bg-secondary/50 cursor-pointer px-2 py-2 rounded-xl flex items-center'
     >
       <div className='h-28 relative me-5 border w-28'>
         <Image

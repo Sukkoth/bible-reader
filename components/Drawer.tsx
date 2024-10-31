@@ -1,31 +1,10 @@
 "use client";
 
-import {
-  X as CloseIcon,
-  User,
-  MenuIcon,
-  LogOutIcon,
-  BookMarked,
-  SunMoon,
-  BookOpenCheck,
-} from "lucide-react";
-import Link from "next/link";
+import { X as CloseIcon, MenuIcon } from "lucide-react";
 
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useState, useTransition } from "react";
-import { useTheme } from "next-themes";
-import { logout } from "@/actions";
-import { Button } from "./ui/button";
+import { useState } from "react";
 import Image from "next/image";
+import DrawerMenu from "./DrawerMenu";
 
 type Props = {
   avatar?: string;
@@ -33,24 +12,12 @@ type Props = {
 
 function Drawer({ avatar }: Props) {
   const [showDrawer, setShowDrawer] = useState(false);
-  const [isLoggingOut, startTransition] = useTransition();
-  const { setTheme, theme } = useTheme();
-
-  function handleSetTheme() {
-    setTheme(theme === "light" ? "dark" : "light");
-  }
-
-  function handleLogout() {
-    startTransition(async () => {
-      await logout();
-    });
-  }
 
   return (
     <>
       <div className='flex items-center gap-2 w-fit h-fit'>
         <div
-          className='text-primary hover:opacity-80 cursor-pointer'
+          className='text-primary hover:opacity-80 cursor-pointer md:hidden'
           onClick={() => setShowDrawer(true)}
         >
           {avatar ? (
@@ -77,88 +44,12 @@ function Drawer({ avatar }: Props) {
         >
           <CloseIcon className='text-3xl' />
         </div>
-        <ul>
-          {drawerItems.map((item) => (
-            <DrawerItem {...item} key={item.label} />
-          ))}
-          <DrawerItem
-            label='Switch Theme'
-            icon={<SunMoon className='size-4' />}
-            onClick={() => handleSetTheme()}
-          />
-          <AlertDialog>
-            <AlertDialogTrigger className='w-full'>
-              <DrawerItem
-                icon={<LogOutIcon className='size-5' />}
-                label='Logout'
-              />
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  By continuing, you logout from your current session in use
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <Button
-                  disabled={isLoggingOut}
-                  onClick={handleLogout}
-                  className='bg-red-700 hover:bg-red-600'
-                >
-                  {isLoggingOut ? "Logging out" : "Continue"}
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </ul>
+        <DrawerMenu />
       </div>
       {showDrawer && (
         <div className='absolute inset-0 backdrop-blur-[2px] z-10'></div>
       )}
     </>
-  );
-}
-
-const drawerItems = [
-  {
-    icon: <BookMarked className='size-5' />,
-    label: "My Plans",
-    to: "/plans",
-  },
-  // {
-  //   icon: <User className='size-5' />,
-  //   label: "Profile",
-  //   to: "/profile",
-  // },
-  {
-    icon: <BookOpenCheck className='size-5' />,
-    label: "Bible Tracker",
-    to: "/bible-tracker",
-  },
-  // {
-  //   icon: <Settings className='size-5' />,
-  //   label: "Settings",
-  //   to: "/settings",
-  // },
-];
-
-type ItemProps = {
-  icon: React.ReactNode;
-  label: string;
-  to?: string;
-  onClick?: () => void;
-};
-function DrawerItem({ icon, label, to, onClick }: ItemProps) {
-  return (
-    <li
-      className='flex gap-3 items-center py-3 px-8 cursor-pointer hover:bg-secondary transition-colors duration-300'
-      onClick={onClick && onClick}
-    >
-      {icon}
-      {to ? <Link href={to}>{label}</Link> : label}
-    </li>
   );
 }
 

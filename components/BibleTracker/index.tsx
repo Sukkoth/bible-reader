@@ -31,7 +31,7 @@ function BibleTracker({ completed, stats }: Props) {
       : "stats";
 
   return (
-    <div>
+    <div className='max-w-[700px] mx-auto'>
       {/* menu toggle on top*/}
       <MenuToggle displaying={displaying} />
       <Separator className='my-5' />

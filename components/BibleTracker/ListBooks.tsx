@@ -22,7 +22,7 @@ function ListBooks({ displaying, completed }: Props) {
         return (
           <div className='my-3' key={category}>
             <h1>{category}</h1>
-            <div className='grid grid-cols-3 xxs:grid-cols-5 sm:grid-cols-6 gap-2 py-2'>
+            <div className='grid grid-cols-3 xxs:grid-cols-5 sm:grid-cols-6 md:grid-cols-8 gap-2 py-2'>
               {books.map((book) => {
                 return (
                   <Button

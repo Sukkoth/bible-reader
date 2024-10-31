@@ -47,7 +47,7 @@ function DeleteSchedule({ userPlanId }: Props) {
       useConfirmButton
       onConfirm={handleDeleteSchedule}
     >
-      <AlertDialogTrigger className='w-full'>
+      <AlertDialogTrigger className='inset-x-5 absolute bottom-5'>
         <div className='w-full bg-red-500 py-3 text-sm text-white hover:bg-red-500/90 rounded-md'>
           Delete Plan
         </div>

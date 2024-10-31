@@ -72,7 +72,7 @@ async function Page() {
   return (
     <div>
       <BackButton href='/home' />
-      <div className='py-5'>
+      <div className='py-5 max-w-[700px] mx-auto'>
         <h1 className='text-sm xxs:text-xl xs:text-2xl'>Bible Tracker</h1>
       </div>
       <BibleTracker completed={completedBooks} stats={fullStats} />

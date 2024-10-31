@@ -25,25 +25,27 @@ async function Plans({ searchParams }: Props) {
       <div>
         <FilterMenu />
         <Separator className='my-3' />
-        {plans?.map((plan, index) => {
-          const completed = plan.schedules
-            .map((schedule) => schedule.items)
-            .flat(2)
-            .filter((schedule) => schedule.status === "COMPLETED").length;
+        <div className='md:grid md:grid-cols-2 gap-3'>
+          {plans?.map((plan, index) => {
+            const completed = plan.schedules
+              .map((schedule) => schedule.items)
+              .flat(2)
+              .filter((schedule) => schedule.status === "COMPLETED").length;
 
-          return (
-            <PlansItem
-              to={`/plans/${plan.id}`}
-              target={plan.totalChapters}
-              progress={completed}
-              type='chapters'
-              text={plan?.plans?.name}
-              subText={`${plan.totalChapters}  Chapters`}
-              key={index}
-              ended={isPast(plan.endDate)}
-            />
-          );
-        })}
+            return (
+              <PlansItem
+                to={`/plans/${plan.id}`}
+                target={plan.totalChapters}
+                progress={completed}
+                type='chapters'
+                text={plan?.plans?.name}
+                subText={`${plan.totalChapters}  Chapters`}
+                key={index}
+                ended={isPast(plan.endDate)}
+              />
+            );
+          })}
+        </div>
         {!plans?.length ? (
           <Alert className='mt-5 shadow-md'>
             <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />

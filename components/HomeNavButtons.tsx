@@ -5,7 +5,7 @@ import Link from "next/link";
 
 function HomeNavButtons() {
   return (
-    <div className='mt-5 space-y-2'>
+    <div className='mt-5 space-y-3'>
       <Link
         href='plans/popular'
         className='w-full text-white rounded-3xl py-[10px] center-all text-sm hover:bg-primary/90 bg-primary'

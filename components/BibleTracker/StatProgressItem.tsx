@@ -9,7 +9,7 @@ type Props = {
 };
 function StatProgressItem({ target, progress, label }: Props) {
   return (
-    <div className='flex flex-col items-center mt-3 p-1'>
+    <div className='flex flex-col items-center mt-3 p-1 md:w-40'>
       <CalendarStatItem target={target} progress={progress} strokeWidth={4}>
         <div
           className={`flex items-center justify-center text-sm xs:text-lg sm:text-xl font-bold ${spartanFont.className}`}

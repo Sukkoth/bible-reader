@@ -36,7 +36,7 @@ function ListTemplates({ templates }: { templates: Template[] }) {
             own and if you can&apos;t find one, you can make your own.
           </p>
 
-          <div>
+          <div className='grid md:grid-cols-2 gap-5 mt-5'>
             {templates?.map((template) => {
               const queryParam = `${template.planId}?template=${template.id}`;
               return (

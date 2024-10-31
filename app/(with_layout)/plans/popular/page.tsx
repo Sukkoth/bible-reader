@@ -28,7 +28,7 @@ async function PopularPlans() {
           deepen your understanding of the Bible.
         </p>
 
-        <div className='mt-5'>
+        <div className='mt-5 grid md:grid-cols-2 gap-5'>
           {templates?.map((template: Template) => {
             const queryParam = `${template.planId}?template=${template.id}`;
             return (
@@ -45,6 +45,9 @@ async function PopularPlans() {
               />
             );
           })}
+        </div>
+        <div className='bg-card p-5 mt-10 border'>
+          <h1 className='text-center'>More plans coming soon 🚀</h1>
         </div>
       </div>
     </div>

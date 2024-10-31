@@ -73,7 +73,7 @@ function Stats({ stats }: Props) {
   return (
     <>
       <Card className='bg-card pt-3'>
-        <CardContent className='grid grid-cols-3 gap-1'>
+        <CardContent className='grid grid-cols-3 gap-4 mx-auto'>
           {progressItems.map((item) => (
             <StatProgressItem {...item} key={item.label} />
           ))}

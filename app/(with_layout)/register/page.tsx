@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 function Register() {
   return (
-    <div className='flex flex-col h-full flex-grow items-center justify-center'>
+    <div className='flex flex-col h-full flex-grow items-center justify-center w-full max-w-[700px] mx-auto'>
       <Card className='mx-5 w-full bg-transparent'>
         <CardHeader>
           <CardTitle className='text-xl xxs:text-2xl xs:text-3xl'>
