@@ -113,7 +113,7 @@ async function Home() {
             </div>
 
             {todaysPlans?.length ? (
-              <div className='mt-3'>
+              <div className='mt-3 space-y-3'>
                 {todaysPlans.map((plan) => {
                   const target = plan.schedules[0].items.length;
                   const progress = plan.schedules[0].items.filter(
