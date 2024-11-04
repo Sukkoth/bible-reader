@@ -60,8 +60,8 @@ async function Home() {
     <>
       <NotificationRequest />
       <div className='overflow-hidden grid md:grid-cols-[auto_1fr] gap-5'>
-        <div className='w-[18rem] dark:bg-card bg-stone-50/90 pt-5 relative hidden md:block rounded-md'>
-          <div className='mx-2 flex gap-3 items-center pb-3 mb-5 border-b border-b-stone-300'>
+        <div className='w-[18rem] dark:bg-card bg-stone-50/70 pt-5 relative hidden md:block rounded-md'>
+          <div className='mx-2 flex gap-3 items-center pb-2 mb-5 border-b border-b-stone-300'>
             <Image
               src={"/transparent.png"}
               alt='icon'
@@ -69,7 +69,7 @@ async function Home() {
               width={50}
               height={50}
             />
-            <h1 className='text-2xl uppercase'>Bible Reader</h1>
+            <h1 className='text-xl uppercase'>Bible Reader</h1>
           </div>
 
           <DrawerMenu />
