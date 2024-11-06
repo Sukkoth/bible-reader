@@ -15,7 +15,6 @@ import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import NotificationRequest from "@/components/NotificationRequest";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import { cn } from "@/lib/utils";
 import DrawerMenu from "@/components/DrawerMenu";
 import Image from "next/image";
 
