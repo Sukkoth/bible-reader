@@ -1,0 +1,942 @@
+
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+
+CREATE EXTENSION IF NOT EXISTS "pg_cron" WITH SCHEMA "pg_catalog";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pg_net" WITH SCHEMA "extensions";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pgsodium" WITH SCHEMA "pgsodium";
+
+
+
+
+
+
+COMMENT ON SCHEMA "public" IS 'standard public schema';
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pg_graphql" WITH SCHEMA "graphql";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pg_stat_statements" WITH SCHEMA "extensions";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA "extensions";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "pgjwt" WITH SCHEMA "extensions";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA "vault";
+
+
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA "extensions";
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION "public"."extend_user_plan"("userplanid" bigint, "daystoadd" bigint) RETURNS "void"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM "userPlans" WHERE id = userPlanId) THEN
+        UPDATE "userPlans"
+        SET "endDate" = "endDate" + (daysToAdd * interval '1 day')
+        WHERE id = userPlanId;
+    ELSE
+        RAISE EXCEPTION 'User plan with ID % does not exist', userPlanId;
+    END IF;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."extend_user_plan"("userplanid" bigint, "daystoadd" bigint) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."greet"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) RETURNS "text"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  RETURN 'Hello, ' || scheduleId || '!';
+END;
+$$;
+
+
+ALTER FUNCTION "public"."greet"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."rescheduleforcatchup"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) RETURNS "void"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+    UPDATE schedules
+    SET date = date + (daysToAdd * interval '1 day')
+    WHERE "userPlanId" = scheduleId
+    AND date >= lastInCompleteDate;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."rescheduleforcatchup"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."update_schedule_item_goal"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_goal" "text") RETURNS "void"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  UPDATE public."userSchedules"
+  SET schedules = jsonb_set(
+    schedules,
+    array[
+      -- Find the correct schedule by ID
+      'schedules',
+      (SELECT index - 1 
+       FROM jsonb_array_elements(schedules) WITH ORDINALITY arr 
+       WHERE arr.value->>'id' = schedule_id),
+      'items',
+      item_index::text, -- Convert item_index to text for the path
+      'goal'
+    ]::text[],
+    to_jsonb(new_goal) -- Set the new goal value
+  )
+  WHERE id = user_schedule_id;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."update_schedule_item_goal"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_goal" "text") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."update_schedule_item_status"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_status" "text") RETURNS "void"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  UPDATE public."userSchedules"
+  SET schedules = jsonb_set(
+    schedules,
+    array[
+      -- Find the correct schedule by ID
+      'schedules',
+      (SELECT index - 1 
+       FROM jsonb_array_elements(schedules) WITH ORDINALITY arr 
+       WHERE arr.value->>'id' = schedule_id),
+      'items',
+      item_index::text, -- Convert item_index to text for the path
+      'status'
+    ]::text[],
+    to_jsonb(new_status) -- Set the new status value (e.g., "COMPLETED" or "PENDING")
+  )
+  WHERE id = user_schedule_id;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."update_schedule_item_status"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_status" "text") OWNER TO "postgres";
+
+SET default_tablespace = '';
+
+SET default_table_access_method = "heap";
+
+
+CREATE TABLE IF NOT EXISTS "public"."bibleTracker" (
+    "id" bigint NOT NULL,
+    "userId" "uuid" NOT NULL,
+    "book" "text" NOT NULL,
+    "progress" "jsonb" NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updatedAt" timestamp without time zone DEFAULT "now"() NOT NULL,
+    "completedAt" "date"
+);
+
+
+ALTER TABLE "public"."bibleTracker" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."bibleTracker" IS 'This tracks the progress of your bible reading from whole bible books persective';
+
+
+
+ALTER TABLE "public"."bibleTracker" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."bibleTracker_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."contactMessages" (
+    "id" bigint NOT NULL,
+    "fullName" "text" NOT NULL,
+    "email" "text" NOT NULL,
+    "message" "text" NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."contactMessages" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."contactMessages" IS 'Messages from users';
+
+
+
+ALTER TABLE "public"."contactMessages" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."contactMessages_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."plans" (
+    "id" bigint NOT NULL,
+    "name" "text" NOT NULL,
+    "description" "text" NOT NULL,
+    "createdBy" "uuid",
+    "coverImg" "text",
+    "suggestedDuration" integer NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updatedAt" timestamp without time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."plans" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."plans" IS 'Reading plans created by users';
+
+
+
+ALTER TABLE "public"."plans" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."plans_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."profiles" (
+    "id" bigint NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp without time zone DEFAULT "now"(),
+    "first_name" "text" NOT NULL,
+    "last_name" "text" NOT NULL,
+    "gender" "text" NOT NULL,
+    "avatar" "text",
+    "user_id" "uuid",
+    "notification" "jsonb" DEFAULT '{"allowed": true, "subscriptions": []}'::"jsonb" NOT NULL
+);
+
+
+ALTER TABLE "public"."profiles" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."profiles" IS 'profile information for users';
+
+
+
+ALTER TABLE "public"."profiles" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."profiles_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."schedules" (
+    "id" bigint NOT NULL,
+    "date" "date" NOT NULL,
+    "items" "jsonb" NOT NULL,
+    "userPlanId" bigint,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp without time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."schedules" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."schedules" IS 'contain specific user plan''s schedule (each days data)';
+
+
+
+ALTER TABLE "public"."schedules" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."schedules_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."templates" (
+    "id" bigint NOT NULL,
+    "books" "jsonb" NOT NULL,
+    "chaptersCount" integer NOT NULL,
+    "planId" bigint NOT NULL,
+    "showTime" boolean NOT NULL,
+    "schedules" "jsonb",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp without time zone DEFAULT "now"(),
+    "templateType" "text" DEFAULT 'CHAPTER'::"text" NOT NULL
+);
+
+
+ALTER TABLE "public"."templates" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."templates" IS 'Provide templates for plans';
+
+
+
+ALTER TABLE "public"."templates" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."templates_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."userPlans" (
+    "id" bigint NOT NULL,
+    "planId" bigint NOT NULL,
+    "userId" "uuid" NOT NULL,
+    "startDate" "date" NOT NULL,
+    "endDate" "date" NOT NULL,
+    "type" "text",
+    "totalBooks" integer,
+    "totalChapters" integer,
+    "perDay" integer DEFAULT 1 NOT NULL,
+    "userMade" boolean DEFAULT true NOT NULL,
+    "customizable" boolean DEFAULT true NOT NULL,
+    "completedAt" "date",
+    "pausedAt" "date"
+);
+
+
+ALTER TABLE "public"."userPlans" OWNER TO "postgres";
+
+
+COMMENT ON TABLE "public"."userPlans" IS 'This is used to store plan schedules for users';
+
+
+
+ALTER TABLE "public"."userPlans" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."userSchedule_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+ALTER TABLE ONLY "public"."bibleTracker"
+    ADD CONSTRAINT "bibleTracker_id_key" UNIQUE ("id");
+
+
+
+ALTER TABLE ONLY "public"."bibleTracker"
+    ADD CONSTRAINT "bibleTracker_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."contactMessages"
+    ADD CONSTRAINT "contactMessages_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."plans"
+    ADD CONSTRAINT "plans_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."profiles"
+    ADD CONSTRAINT "profiles_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."profiles"
+    ADD CONSTRAINT "profiles_user_id_key" UNIQUE ("user_id");
+
+
+
+ALTER TABLE ONLY "public"."schedules"
+    ADD CONSTRAINT "schedules_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."templates"
+    ADD CONSTRAINT "templates_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."userPlans"
+    ADD CONSTRAINT "userSchedule_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."bibleTracker"
+    ADD CONSTRAINT "bibleTracker_userId_fkey" FOREIGN KEY ("userId") REFERENCES "auth"."users"("id");
+
+
+
+ALTER TABLE ONLY "public"."plans"
+    ADD CONSTRAINT "plans_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "auth"."users"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."profiles"
+    ADD CONSTRAINT "profiles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."schedules"
+    ADD CONSTRAINT "schedules_userPlanId_fkey" FOREIGN KEY ("userPlanId") REFERENCES "public"."userPlans"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."templates"
+    ADD CONSTRAINT "templates_planId_fkey" FOREIGN KEY ("planId") REFERENCES "public"."plans"("id") ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "public"."userPlans"
+    ADD CONSTRAINT "userSchedule_userId_fkey" FOREIGN KEY ("userId") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."userPlans"
+    ADD CONSTRAINT "userSchedules_planId_fkey" FOREIGN KEY ("planId") REFERENCES "public"."plans"("id") ON DELETE CASCADE;
+
+
+
+CREATE POLICY "Enable delete for users based on user_id" ON "public"."plans" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "createdBy"));
+
+
+
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."contactMessages" FOR INSERT WITH CHECK (true);
+
+
+
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."plans" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+
+
+CREATE POLICY "Enable read access for all users" ON "public"."bibleTracker" USING (true);
+
+
+
+CREATE POLICY "Enable read access for all users" ON "public"."plans" FOR SELECT USING (true);
+
+
+
+CREATE POLICY "Enable read access for all users" ON "public"."schedules" FOR SELECT TO "authenticated" USING (true);
+
+
+
+CREATE POLICY "Enable read access for all users" ON "public"."templates" FOR SELECT USING (true);
+
+
+
+ALTER TABLE "public"."bibleTracker" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."contactMessages" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."plans" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."templates" ENABLE ROW LEVEL SECURITY;
+
+
+
+
+ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+
+
+
+
+
+
+
+
+GRANT USAGE ON SCHEMA "public" TO "postgres";
+GRANT USAGE ON SCHEMA "public" TO "anon";
+GRANT USAGE ON SCHEMA "public" TO "authenticated";
+GRANT USAGE ON SCHEMA "public" TO "service_role";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GRANT ALL ON FUNCTION "public"."extend_user_plan"("userplanid" bigint, "daystoadd" bigint) TO "anon";
+GRANT ALL ON FUNCTION "public"."extend_user_plan"("userplanid" bigint, "daystoadd" bigint) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."extend_user_plan"("userplanid" bigint, "daystoadd" bigint) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."greet"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."greet"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."greet"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."rescheduleforcatchup"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."rescheduleforcatchup"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."rescheduleforcatchup"("daystoadd" integer, "lastincompletedate" "date", "scheduleid" integer) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."update_schedule_item_goal"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_goal" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."update_schedule_item_goal"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_goal" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."update_schedule_item_goal"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_goal" "text") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."update_schedule_item_status"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_status" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."update_schedule_item_status"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_status" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."update_schedule_item_status"("user_schedule_id" bigint, "schedule_id" "text", "item_index" integer, "new_status" "text") TO "service_role";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GRANT ALL ON TABLE "public"."bibleTracker" TO "anon";
+GRANT ALL ON TABLE "public"."bibleTracker" TO "authenticated";
+GRANT ALL ON TABLE "public"."bibleTracker" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."bibleTracker_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."bibleTracker_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."bibleTracker_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."contactMessages" TO "anon";
+GRANT ALL ON TABLE "public"."contactMessages" TO "authenticated";
+GRANT ALL ON TABLE "public"."contactMessages" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."contactMessages_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."contactMessages_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."contactMessages_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."plans" TO "anon";
+GRANT ALL ON TABLE "public"."plans" TO "authenticated";
+GRANT ALL ON TABLE "public"."plans" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."plans_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."plans_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."plans_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."profiles" TO "anon";
+GRANT ALL ON TABLE "public"."profiles" TO "authenticated";
+GRANT ALL ON TABLE "public"."profiles" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."profiles_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."profiles_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."profiles_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."schedules" TO "anon";
+GRANT ALL ON TABLE "public"."schedules" TO "authenticated";
+GRANT ALL ON TABLE "public"."schedules" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."schedules_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."schedules_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."schedules_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."templates" TO "anon";
+GRANT ALL ON TABLE "public"."templates" TO "authenticated";
+GRANT ALL ON TABLE "public"."templates" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."templates_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."templates_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."templates_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."userPlans" TO "anon";
+GRANT ALL ON TABLE "public"."userPlans" TO "authenticated";
+GRANT ALL ON TABLE "public"."userPlans" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."userSchedule_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."userSchedule_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."userSchedule_id_seq" TO "service_role";
+
+
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES  TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES  TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES  TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON SEQUENCES  TO "service_role";
+
+
+
+
+
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS  TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS  TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS  TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON FUNCTIONS  TO "service_role";
+
+
+
+
+
+
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES  TO "postgres";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES  TO "anon";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES  TO "authenticated";
+ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TABLES  TO "service_role";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RESET ALL;
