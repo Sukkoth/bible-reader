@@ -158,6 +158,21 @@ async function Plan({ params }: { params: { planId: string } }) {
               ))}
             </div>
             <Separator className='my-5' />
+            {lastIncompletedDate && (
+              <Alert
+                className='mt-5 shadow-md bg-transparent mb-5'
+                variant={"destructive"}
+              >
+                <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />
+                <AlertTitle className='font-bold'>
+                  You are behind your schedule
+                </AlertTitle>
+                <AlertDescription className='text-xs'>
+                  Try to read more and be on track or use &quot;catch up&quot;
+                  from menu to adjust to your readings{" "}
+                </AlertDescription>
+              </Alert>
+            )}
             {plan.pausedAt && (
               <Alert className='mt-5 shadow-md bg-transparent mb-5'>
                 <ExclamationTriangleIcon className='h-4 w-4 animate-pulse' />
