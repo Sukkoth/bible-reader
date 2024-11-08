@@ -122,7 +122,7 @@ export default function PlanCalendarView({ plan, indexToShow }: Props) {
             return (
               <CarouselItem
                 key={index}
-                className={`basis-full xxs:basis-1/2 xs:basis-1/3 cursor-pointer border pl-0 dark:hover:border-white hover:border-stone-900 transition-all duration-300 ${
+                className={`select-none basis-full xxs:basis-1/2 xs:basis-1/3 cursor-pointer border pl-0 dark:hover:border-white hover:border-stone-900 transition-all duration-300 ${
                   selectedDate === index
                     ? "border-stone-900 dark:border-white"
                     : "border-secondary dark:border-stone-700 border-stone-200"
