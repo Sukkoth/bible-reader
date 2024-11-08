@@ -60,6 +60,7 @@ function NewPlanItem({
               <div
                 className={cn("text-xs flex items-center gap-2", {
                   "text-red-500": !customizable,
+                  "text-green-500": customizable,
                 })}
               >
                 <LucidePanelLeftOpen className='size-5' />
