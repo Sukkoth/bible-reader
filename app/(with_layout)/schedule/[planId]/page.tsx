@@ -41,10 +41,13 @@ async function Page({ searchParams }: Props) {
 
   if (template) {
     props = {
-      showBooks: template.templateType === "PORTION" ? false : true,
+      showBooks:
+        template.schedules.userMade && template.templateType === "CHAPTER"
+          ? true
+          : false,
       selected: template.schedules.items, //this is nested array
       books: template.books,
-      perDay: template.schedules.perDay, //TODO fix this bcz not needed on "PORTION"
+      perDay: template.schedules.perDay,
       customizable: template.schedules.customizable,
       userMade: template.schedules.userMade,
       template: template,
@@ -54,7 +57,7 @@ async function Page({ searchParams }: Props) {
       showBooks: true,
       selected: [], //this is nested array
       books: [],
-      perDay: 1, //TODO fix this bcz not needed on "PORTION"
+      perDay: 1,
       customizable: true,
       userMade: true,
     };
