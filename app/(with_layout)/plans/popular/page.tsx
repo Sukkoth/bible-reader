@@ -46,9 +46,6 @@ async function PopularPlans() {
             );
           })}
         </div>
-        <div className='bg-card p-5 mt-10 border'>
-          <h1 className='text-center'>More plans coming soon 🚀</h1>
-        </div>
       </div>
     </div>
   );
