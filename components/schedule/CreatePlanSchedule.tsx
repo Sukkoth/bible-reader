@@ -70,6 +70,7 @@ function CreatePlanSchedule(args: Props) {
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [chapterCount, setChapterCount] = useState(args.perDay);
+  const [customizePlan, setCustomizePlan] = useState(false); //if the plan can be customized, you will have an option to either customize it or just use the default schedule
 
   /**
    * when you first this platform, you might already had a reading plan you were following
@@ -114,18 +115,22 @@ function CreatePlanSchedule(args: Props) {
   );
 
   useEffect(() => {
-    //whenever chapter count and startDay change, push back the end date
     if (startDate) {
-      setEndDate(
-        addDays(
-          startDate,
-          args.customizable
-            ? args.userMade
-              ? Math.ceil(totalBooks.chapters / chapterCount) - 1 || 0
-              : Math.ceil(args.selected.flat(1).length / chapterCount)
-            : args.selected.length
-        )
-      );
+      let daysToAdd; //whenever chapter count and startDay change, push back the end date
+
+      //there are 3 possibilities to calculate end date
+      if (args.userMade) {
+        // When the plan is custom in the first place, (the one user makes) => user made
+        daysToAdd = Math.ceil(totalBooks.chapters / chapterCount) - 1 || 0;
+      } else if (args.customizable && customizePlan) {
+        //plan is customizable => and user have enabled it (only for popular plan)
+        daysToAdd = Math.ceil(args.selected.flat(1).length / chapterCount);
+      } else {
+        //plan is customizable => but not enabled by user (using checkbox) (only for popular plan)
+        daysToAdd = args.selected.length;
+      }
+
+      setEndDate(addDays(startDate, daysToAdd));
 
       //date-fns makes marks today as past sometimes(based on time) hence using !isSameDay
       if (!isSameDay(new Date(), startDate) && isPast(startDate)) {
@@ -133,7 +138,7 @@ function CreatePlanSchedule(args: Props) {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chapterCount, startDate]);
+  }, [chapterCount, startDate, customizePlan]);
 
   //ro redirect when the data is created
   useEffect(() => {
@@ -164,7 +169,7 @@ function CreatePlanSchedule(args: Props) {
           totalChapters: totalBooks.chapters,
           markPreviousAsComplete: markPreviousAsComplete,
         });
-      else if (args.customizable) {
+      else if (args.customizable && customizePlan) {
         parsedData = GeneratePlanSchedule.forCustomized(args.selected, {
           selectedBooks: selected,
           startDate,
@@ -399,9 +404,27 @@ function CreatePlanSchedule(args: Props) {
                       </Popover>
                     </div>
                   </div>
+                  {!args.userMade && args.customizable && (
+                    <div className='inline-flex gap-2 mt-4 self-start border px-3 py-[16px] rounded-sm w-full bg-background'>
+                      <Checkbox
+                        id={"setPreviousAsMarked"}
+                        className='cursor-pointer border-gray-500 data-[state=checked]:bg-gray-500 dark:border-white dark:data-[state=checked]:bg-white'
+                        // checked={markPreviousAsComplete}
+                        onCheckedChange={(checked) => {
+                          setCustomizePlan((prev) => !prev);
+                        }}
+                      />
+                      <Label
+                        className='cursor-pointer'
+                        htmlFor='setPreviousAsMarked'
+                      >
+                        Customize this plan
+                      </Label>
+                    </div>
+                  )}
                   <div className='flex justify-center flex-col items-center'>
                     {/* they should be visible only for those plans which are customizable */}
-                    {args.customizable && (
+                    {(customizePlan || args.userMade) && (
                       <div className='flex items-center gap-4'>
                         <Button
                           size={"icon"}
@@ -522,7 +545,7 @@ function CreatePlanSchedule(args: Props) {
               </CardContent>
             </Card>
 
-            {args.customizable && (
+            {args.userMade && (
               <Button
                 size={"lg"}
                 className='w-full mb-5'

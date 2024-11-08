@@ -124,7 +124,7 @@ export function forCustomized(
     endDate: format(endDate!, "yyyy-MM-dd"),
     totalBooks,
     totalChapters,
-    perSession,
+    perDay: perSession,
     userMade: false,
     customizable: true,
     schedules: plan,
