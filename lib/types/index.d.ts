@@ -13,10 +13,11 @@ declare global {
     created_at: string;
     updated_at: string;
     first_name: string;
-    last_name: string;
+    last_name?: string;
     gender: string;
     avatar?: string;
     user_id: string;
+    email?: string;
     notification: Notification;
   }
 
@@ -45,6 +46,7 @@ declare global {
     id: string;
     date: string;
     items: ScheduleItem[];
+    userPlanId: number;
   }
 
   // UserPlan interface

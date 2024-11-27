@@ -8,9 +8,10 @@ import DrawerMenu from "./DrawerMenu";
 
 type Props = {
   avatar?: string;
+  otp: string | null;
 };
 
-function Drawer({ avatar }: Props) {
+function Drawer({ avatar, otp }: Props) {
   const [showDrawer, setShowDrawer] = useState(false);
 
   return (
@@ -44,7 +45,7 @@ function Drawer({ avatar }: Props) {
         >
           <CloseIcon className='text-3xl' />
         </div>
-        <DrawerMenu />
+        <DrawerMenu otp={otp} />
       </div>
       {showDrawer && (
         <div className='absolute inset-0 backdrop-blur-[2px] z-10'></div>

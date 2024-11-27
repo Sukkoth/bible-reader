@@ -1,9 +1,9 @@
-import { LoginSchemaType } from "@/lib/schemas/authSchema";
-import { CompleteProfileSchemaType } from "@/lib/schemas/completeProfileSchema";
-import { CreatePlanSchemaType } from "@/lib/schemas/createPlanSchema";
-import { differenceInCalendarDays, format, isPast } from "date-fns";
-import { createClient } from "./server";
-import { redirect } from "next/navigation";
+import { LoginSchemaType } from '@/lib/schemas/authSchema';
+import { CompleteProfileSchemaType } from '@/lib/schemas/completeProfileSchema';
+import { CreatePlanSchemaType } from '@/lib/schemas/createPlanSchema';
+import { differenceInCalendarDays, format, isPast } from 'date-fns';
+import { redirect } from 'next/navigation';
+import { createClient } from './server';
 
 type GetUserArgs = {
   withRedirect: boolean;
@@ -13,7 +13,7 @@ export async function GET_USER(args: GetUserArgs = { withRedirect: true }) {
   const { data, error } = await supabase.auth.getUser();
   if (error) {
     if (args.withRedirect) {
-      redirect("/login");
+      redirect('/login');
     } else {
       return { user: null };
     }
@@ -23,22 +23,40 @@ export async function GET_USER(args: GetUserArgs = { withRedirect: true }) {
   return { user: data.user, profile: profileData };
 }
 
+type Otp = {
+  otp: string;
+  expires_at: Date;
+};
+
+export async function GET_OTP_FOR_TELEGRAM(email: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase.from('otp_requests').select('*').eq('email', email);
+
+  if (error || !data.length) {
+    return {
+      otp: null,
+    };
+  }
+
+  const otpData = data[0] as Otp;
+
+  return { otp: otpData.otp };
+}
+
 export async function LOGOUT() {
   const supabase = createClient();
   const { error } = await supabase.auth.signOut();
   if (error) {
-    throw new Error("Could not logout");
+    throw new Error('Could not logout');
   }
 }
 
 export async function LOGIN(formData: LoginSchemaType) {
   const supabase = createClient();
 
-  const { data, error: authError } = await supabase.auth.signInWithPassword(
-    formData
-  );
+  const { data, error: authError } = await supabase.auth.signInWithPassword(formData);
   if (authError) {
-    throw new Error(authError.message || "Something went wrong");
+    throw new Error(authError.message || 'Something went wrong');
   }
 
   const userId = data.user.id;
@@ -51,7 +69,7 @@ export async function REGISTER(formData: LoginSchemaType) {
 
   const { data, error } = await supabase.auth.signUp(formData);
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    throw new Error(error.message || 'Something went wrong');
   }
   return data;
 }
@@ -60,9 +78,9 @@ async function GET_PROFILE(userId: string): Promise<Profile> {
   const supabase = createClient();
 
   const { data: profileData } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("user_id", userId)
+    .from('profiles')
+    .select('*')
+    .eq('user_id', userId)
     .single();
   return profileData;
 }
@@ -77,52 +95,44 @@ export async function UPDATE_PROFILE(
   const dataToUpdate = {
     id: profileId || undefined,
     first_name: formData.firstName,
-    last_name: formData.lastName!.length > 0 ? formData.lastName : undefined,
+    last_name: formData.lastName && formData.lastName.length > 0 ? formData.lastName : undefined,
     avatar: formData.avatar,
     gender: formData.gender,
     user_id: userId,
+    telegram_id: formData.telegram_id,
+    email: formData.email,
   };
 
-  const { data, error } = await supabase
-    .from("profiles")
-    .upsert(dataToUpdate)
-    .select()
-    .single();
+  const { data, error } = await supabase.from('profiles').upsert(dataToUpdate).select().single();
 
   if (error) {
-    throw new Error(error?.message || "Something went wrong");
+    throw new Error(error?.message || 'Something went wrong');
   }
 
-  return data;
+  return data as Profile;
 }
 
-export async function HANDLE_NOTIFICATION_SUBSCRIPTION(
-  notification: Notification,
-  userId: string
-) {
+export async function HANDLE_NOTIFICATION_SUBSCRIPTION(notification: Notification, userId: string) {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from("profiles")
+    .from('profiles')
     .update({ notification })
-    .eq("user_id", userId)
-    .select("notification")
+    .eq('user_id', userId)
+    .select('notification')
     .single();
   if (error) {
-    console.error("Could not create notification subscription", error);
-    throw new Error(error?.message || "Could not create notification");
+    console.error('Could not create notification subscription', error);
+    throw new Error(error?.message || 'Could not create notification');
   }
   return data.notification;
 }
 
 //* PLAN SERVICES
-export async function CREATE_PLAN(
-  formData: CreatePlanSchemaType,
-  userId: string
-) {
+export async function CREATE_PLAN(formData: CreatePlanSchemaType, userId: string) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-    .from("plans")
+    .from('plans')
     .insert({
       ...formData,
       createdBy: userId,
@@ -131,7 +141,7 @@ export async function CREATE_PLAN(
     .single();
 
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    throw new Error(error.message || 'Something went wrong');
   }
 
   return data as Plan;
@@ -157,10 +167,7 @@ export type CreatePlanSchedule = {
   }[];
 };
 
-export async function CREATE_PLAN_SCHEDULE(
-  formData: CreatePlanSchedule,
-  userId: string
-) {
+export async function CREATE_PLAN_SCHEDULE(formData: CreatePlanSchedule, userId: string) {
   const supabase = createClient();
 
   //remove the time zones from start and end dates
@@ -168,21 +175,22 @@ export async function CREATE_PLAN_SCHEDULE(
   //the first item in the schedules (mostly 1 date difference)
   const { schedules, ...otherData } = formData;
   const { data, error } = await supabase
-    .from("userPlans")
+    .from('userPlans')
     .insert({
       ...otherData,
-      startDate: format(otherData.startDate, "yyyy-MM-dd HH:mm:ss"),
-      endDate: format(otherData.endDate, "yyyy-MM-dd HH:mm:ss"),
+      startDate: format(otherData.startDate, 'yyyy-MM-dd HH:mm:ss'),
+      endDate: format(otherData.endDate, 'yyyy-MM-dd HH:mm:ss'),
       userId,
     })
     .select()
     .single();
 
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    console.log('Error creating plan', error);
+    throw new Error(error.message || 'Something went wrong');
   }
 
-  const { error: scheduleError } = await supabase.from("schedules").insert(
+  const { error: scheduleError } = await supabase.from('schedules').insert(
     schedules.map((schedule) => {
       return {
         ...schedule,
@@ -192,7 +200,7 @@ export async function CREATE_PLAN_SCHEDULE(
   );
 
   if (scheduleError) {
-    throw new Error(scheduleError.message || "Something wenet wrong!");
+    throw new Error(scheduleError.message || 'Something wenet wrong!');
   }
 
   return data;
@@ -203,17 +211,17 @@ export async function GET_PLAN_SCHEDULE(scheduleId: number) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-    .from("userPlans")
-    .select("*, plans(*), schedules(*)")
-    .order("id", { referencedTable: "schedules" })
-    .eq("id", scheduleId)
+    .from('userPlans')
+    .select('*, plans(*), schedules(*)')
+    .order('id', { referencedTable: 'schedules' })
+    .eq('id', scheduleId)
     .single();
 
   if (error) {
-    if (error.code === "PGRST116") {
+    if (error.code === 'PGRST116') {
       return null;
     } else {
-      throw new Error(error.message || "Something went wrong");
+      throw new Error(error.message || 'Something went wrong');
     }
   }
   return data as UserPlan;
@@ -222,27 +230,27 @@ export async function GET_PLAN_SCHEDULE(scheduleId: number) {
 export async function GET_PLANS(userId: string, filter: string) {
   const supabase = createClient();
   let query = supabase
-    .from("userPlans")
-    .select("*, plans(*), schedules(*)")
-    .eq("userId", userId)
-    .order("id", { referencedTable: "schedules" });
+    .from('userPlans')
+    .select('*, plans(*), schedules(*)')
+    .eq('userId', userId)
+    .order('id', { referencedTable: 'schedules' });
 
-  if (filter === "In Progress") {
-    query = query.is("completedAt", null).is("pausedAt", null);
-  } else if (filter === "Paused") {
-    query = query.not("pausedAt", "is", null);
-  } else if (filter === "Completed") {
-    query = query.not("completedAt", "is", null);
+  if (filter === 'In Progress') {
+    query = query.is('completedAt', null).is('pausedAt', null);
+  } else if (filter === 'Paused') {
+    query = query.not('pausedAt', 'is', null);
+  } else if (filter === 'Completed') {
+    query = query.not('completedAt', 'is', null);
   } else {
     //All
-    query = query.order("completedAt", {
+    query = query.order('completedAt', {
       nullsFirst: true,
     }); //display completedAt = null plans first
   }
 
   const { data, error } = await query;
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    throw new Error(error.message || 'Something went wrong');
   }
 
   return data as UserPlan[];
@@ -257,14 +265,14 @@ export async function UPDATE_SCHEDULE_ITEM_STATUS(formData: MarkPlanGoalData) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-    .from("schedules")
+    .from('schedules')
     .update({ items: formData.items.items })
-    .eq("id", formData.scheduleId)
+    .eq('id', formData.scheduleId)
     .select()
     .single();
 
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    throw new Error(error.message || 'Something went wrong');
   }
 
   return data as Schedule;
@@ -274,34 +282,33 @@ export async function GET_TODAYS_PLANS(userId: string) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-    .from("userPlans")
-    .select("*, plans(*), schedules(*)")
-    .eq("userId", userId)
-    .is("completedAt", null)
-    .eq("schedules.date", format(new Date(), "yyyy-MM-dd"))
-    .is("pausedAt", null);
+    .from('userPlans')
+    .select('*, plans(*), schedules(*)')
+    .eq('userId', userId)
+    .is('completedAt', null)
+    .eq('schedules.date', format(new Date(), 'yyyy-MM-dd'))
+    .is('pausedAt', null);
 
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    throw new Error(error.message || 'Something went wrong');
   }
 
-  return (data as UserPlan[])?.filter(
-    (dataItem) => dataItem.schedules.length > 0
-  );
+  return (data as UserPlan[])?.filter((dataItem) => dataItem.schedules.length > 0);
 }
 
 export async function MARK_PLAN_AS_COMPLETE(userPlanId: number) {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from("userPlans")
-    .update({ completedAt: format(new Date(), "yyyy-MM-dd") })
-    .eq("id", userPlanId)
-    .select();
+    .from('userPlans')
+    .update({ completedAt: format(new Date(), 'yyyy-MM-dd') })
+    .eq('id', userPlanId)
+    .select()
+    .single();
 
   if (error) {
-    throw new Error(error?.message || "Something went wrong");
+    throw new Error(error?.message || 'Something went wrong');
   }
-  return data;
+  return data as UserPlan;
 }
 
 type CatchUpArgs = {
@@ -313,17 +320,22 @@ type CatchUpArgs = {
 export async function CATCHUP_SCHEDULE(args: CatchUpArgs) {
   const supabase = createClient();
 
-  const { error } = await supabase.rpc("rescheduleforcatchup", {
+  const { error } = await supabase.rpc('rescheduleforcatchup', {
     daystoadd: args.daysToAdd,
     lastincompletedate: args.lastInCompleteDate,
     scheduleid: args.scheduleId,
   });
 
   if (!error) {
-    await supabase.rpc("extend_user_plan", {
+    const { error: secondError } = await supabase.rpc('extend_user_plan', {
       userplanid: args.scheduleId,
       daystoadd: args.daysToAdd,
     });
+
+    if (secondError)
+      return {
+        error: secondError.message,
+      };
   }
 
   if (error)
@@ -338,17 +350,15 @@ export async function CATCHUP_SCHEDULE(args: CatchUpArgs) {
 
 export async function PAUSE_PLAN(scheduleId: number, pause: boolean) {
   const supabase = createClient();
-  const pauseAt = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "Africa/Nairobi" })
-  );
+  const pauseAt = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Nairobi' }));
 
   //fetch the plan to determine if it needs catchup
   //you know that by reading pausedAt field
   //if it has a past date it needs catch up, if not, it doesn't.
   const { data: plan, error: fetchPlanerror } = await supabase
-    .from("userPlans")
-    .select("*")
-    .eq("id", scheduleId)
+    .from('userPlans')
+    .select('*')
+    .eq('id', scheduleId)
     .single();
   if (fetchPlanerror) {
     return {
@@ -357,11 +367,7 @@ export async function PAUSE_PLAN(scheduleId: number, pause: boolean) {
   }
 
   //catch up plan
-  if (
-    !pause &&
-    isPast(plan.pausedAt) &&
-    format(pauseAt, "yyyy-MM-dd") !== plan.pausedAt
-  ) {
+  if (!pause && isPast(plan.pausedAt) && format(pauseAt, 'yyyy-MM-dd') !== plan.pausedAt) {
     const daysToAdd = differenceInCalendarDays(pauseAt, plan.pausedAt);
     const lastInCompleteDate = plan.pausedAt;
     const result = await CATCHUP_SCHEDULE({
@@ -378,9 +384,9 @@ export async function PAUSE_PLAN(scheduleId: number, pause: boolean) {
 
   //then remove pausedAt
   const { error } = await supabase
-    .from("userPlans")
+    .from('userPlans')
     .update({ pausedAt: pause ? pauseAt : null })
-    .eq("id", scheduleId)
+    .eq('id', scheduleId)
     .single();
 
   if (error) {
@@ -401,12 +407,12 @@ export async function GET_TEMPLATES(args: GetTemplateProps) {
   const supabase = createClient();
 
   const { data, error } = await supabase
-    .from("templates")
-    .select("*, plans(*)")
-    .eq("schedules -> userMade", args?.userMade ?? true);
+    .from('templates')
+    .select('*, plans(*)')
+    .eq('schedules -> userMade', args?.userMade ?? true);
 
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    throw new Error(error.message || 'Something went wrong');
   }
 
   return data;
@@ -415,12 +421,12 @@ export async function GET_TEMPLATES(args: GetTemplateProps) {
 export async function GET_TEMPLATE(templateId: number) {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from("templates")
-    .select("*, plans(*)")
-    .eq("id", templateId)
+    .from('templates')
+    .select('*, plans(*)')
+    .eq('id', templateId)
     .single();
   if (error) {
-    throw new Error(error.message || "Something went wrong");
+    throw new Error(error.message || 'Something went wrong');
   }
 
   return data as Template;
@@ -428,14 +434,12 @@ export async function GET_TEMPLATE(templateId: number) {
 
 export async function GET_CURRENT_MONTH_DAILY_PROGRESS(
   userId: string,
-  userTimezone: string = "Africa/Nairobi"
+  userTimezone: string = 'Africa/Nairobi'
 ) {
   const supabase = createClient();
 
   // Get the start and end dates for the current month in the user's timezone
-  const startDate = new Date(
-    new Date().toLocaleString("en-US", { timeZone: userTimezone })
-  );
+  const startDate = new Date(new Date().toLocaleString('en-US', { timeZone: userTimezone }));
   startDate.setDate(1); // Set to the first day of the month
 
   const endDate = new Date(startDate);
@@ -443,15 +447,15 @@ export async function GET_CURRENT_MONTH_DAILY_PROGRESS(
   endDate.setDate(1); // Set to the first day of the next month
 
   const { data, error } = await supabase
-    .from("userPlans")
-    .select("schedules(*)")
-    .eq("userId", userId)
-    .filter("schedules.date", "gte", startDate.toISOString())
-    .filter("schedules.date", "lt", endDate.toISOString()) // Use 'lt' for exclusive end date
-    .order("date", { ascending: true, referencedTable: "schedules" });
+    .from('userPlans')
+    .select('schedules(*)')
+    .eq('userId', userId)
+    .filter('schedules.date', 'gte', startDate.toISOString())
+    .filter('schedules.date', 'lt', endDate.toISOString()) // Use 'lt' for exclusive end date
+    .order('date', { ascending: true, referencedTable: 'schedules' });
 
   if (error) {
-    throw new Error(error?.message || "Something went wrong");
+    throw new Error(error?.message || 'Something went wrong');
   }
 
   return data as { schedules: Schedule[] }[];
@@ -459,10 +463,7 @@ export async function GET_CURRENT_MONTH_DAILY_PROGRESS(
 
 export async function DELETE_USER_PLAN(userPlanId: number) {
   const supabase = createClient();
-  const { error } = await supabase
-    .from("userPlans")
-    .delete()
-    .eq("id", userPlanId);
+  const { error } = await supabase.from('userPlans').delete().eq('id', userPlanId);
 
   return { error };
 }
@@ -476,12 +477,12 @@ export async function GET_BOOK_PROGRESS(book: string) {
   } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
-    .from("bibleTracker")
-    .select("*")
-    .eq("userId", user!.id)
-    .eq("book", book);
+    .from('bibleTracker')
+    .select('*')
+    .eq('userId', user!.id)
+    .eq('book', book);
   if (error) {
-    throw new Error(error?.message || "Something went wrong");
+    throw new Error(error?.message || 'Something went wrong');
   }
 
   return data;
@@ -493,10 +494,7 @@ export async function GET_BOOKS_PROGRESS() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data } = await supabase
-    .from("bibleTracker")
-    .select("*")
-    .eq("userId", user!.id);
+  const { data } = await supabase.from('bibleTracker').select('*').eq('userId', user!.id);
 
   return data;
 }
@@ -507,42 +505,37 @@ export type MarkChapterBook = {
   progress: BookProgressItem[];
   markAsComplete: boolean;
 };
-export async function MARK_BOOK_CHAPTER({
-  book,
-  progress,
-  id,
-  markAsComplete,
-}: MarkChapterBook) {
+export async function MARK_BOOK_CHAPTER({ book, progress, id, markAsComplete }: MarkChapterBook) {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user || !user.id) {
-    throw new Error("Not authenticated");
+    throw new Error('Not authenticated');
   }
   const { data, error } = await supabase
-    .from("bibleTracker")
+    .from('bibleTracker')
     .upsert({
       id,
       userId: user.id,
       book,
       progress: progress,
-      completedAt: markAsComplete ? format(new Date(), "yyyy-MM-dd") : null,
+      completedAt: markAsComplete ? format(new Date(), 'yyyy-MM-dd') : null,
     })
-    .eq("userId", user.id)
-    .eq("book", book)
+    .eq('userId', user.id)
+    .eq('book', book)
     .single();
 
   if (error) {
-    throw new Error(error?.message || "Something went wrong");
+    throw new Error(error?.message || 'Something went wrong');
   }
 
   return data;
 }
 
 export async function MARK_ALL_CHAPTERS_IN_BOOK(
-  data: Pick<BookProgress, "book" | "progress"> & { id?: number }
+  data: Pick<BookProgress, 'book' | 'progress'> & { id?: number }
 ) {
   const supabase = createClient();
   const {
@@ -550,14 +543,14 @@ export async function MARK_ALL_CHAPTERS_IN_BOOK(
   } = await supabase.auth.getUser();
 
   const { error } = await supabase
-    .from("bibleTracker")
+    .from('bibleTracker')
     .upsert({
       ...data,
       userId: user!.id,
-      completedAt: format(new Date(), "yyyy-MM-dd"),
+      completedAt: format(new Date(), 'yyyy-MM-dd'),
     })
-    .eq("userId", user!.id)
-    .eq("book", data.book)
+    .eq('userId', user!.id)
+    .eq('book', data.book)
     .single();
 
   return { error };
@@ -570,10 +563,10 @@ export async function GET_COMPLETED_BOOKS() {
   } = await supabase.auth.getUser();
 
   const { data } = await supabase
-    .from("bibleTracker")
-    .select("book")
-    .eq("userId", user!.id)
-    .not("completedAt", "is", null);
+    .from('bibleTracker')
+    .select('book')
+    .eq('userId', user!.id)
+    .not('completedAt', 'is', null);
 
   const parsed = data ? data.map((book) => book.book) : [];
   return parsed as string[];
@@ -585,10 +578,7 @@ export async function RESET_BIBLE_READING_PROGRESS() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { error } = await supabase
-    .from("bibleTracker")
-    .delete()
-    .eq("userId", user!.id);
+  const { error } = await supabase.from('bibleTracker').delete().eq('userId', user!.id);
 
   return { error };
 }
@@ -601,13 +591,10 @@ export type ContactArgs = {
 export async function SAVE_MESSAGE(args: ContactArgs) {
   const supabase = createClient();
 
-  const { error } = await supabase
-    .from("contactMessages")
-    .insert(args)
-    .single();
+  const { error } = await supabase.from('contactMessages').insert(args).single();
 
   if (error) {
-    return { error: error.message || "Could not send message!" };
+    return { error: error.message || 'Could not send message!' };
   }
 
   return { error: null };

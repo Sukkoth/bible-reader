@@ -2,6 +2,10 @@ import withPWA from "next-pwa";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    // [!code ++] // [!code focus]
+    serverComponentsExternalPackages: ["grammy"], // [!code ++] // [!code focus]
+  }, // [!code ++] // [!code focus]
   reactStrictMode: true, // Enable React strict mode for improved error handling
   swcMinify: true, // Enable SWC minification for improved performance
   images: {
