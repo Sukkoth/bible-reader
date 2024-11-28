@@ -38,6 +38,9 @@ bot.callbackQuery('popular_plans_callback', async (ctx) => {
 bot.command('todays', async (ctx) => {
   await CommandHandlers.todaysPlansCommandHandler(ctx);
 });
+bot.command('help', async (ctx) => {
+  await CommandHandlers.helpCommandHandler(ctx);
+});
 
 bot.callbackQuery('todays_plans_callback', async (ctx) => {
   //do the same thing as when the user uses /todays command

@@ -98,3 +98,42 @@ export async function todaysPlansCommandHandler(ctx: Context) {
     },
   });
 }
+
+export async function helpCommandHandler(ctx: Context) {
+  await ctx.reply(
+    `
+  📖 *About the Bot:*  
+  
+  This bot helps you maintain a consistent Bible reading habit with features like reading plans and progress tracking. Learn more at [Bible Reader](https://thebiblereader.vercel.app).  
+  
+  🛠 *How to Use:*  
+  1. *Link Account:*  
+     - If you have an account on the [Bible Reader](https://thebiblereader.vercel.app) website, you can link it.  
+     - Send message to the bot accordingly => 
+      \`\`\` link your-email@example.com \`\`\` 
+     - An OTP will be sent to your account on the website (check the drawer menu). Copy the OTP and send it back here. The bot will link your account.  
+     - If your email doesn’t exist, register via the bot or website (see below).  
+  
+  2. *Register:*  
+     Send message to the bot accordingly=>:  
+     \`\`\`
+  email: your-email@example.com
+  password: your-password
+  gender: male | female
+  \`\`\`
+  
+  💡 *Commands:*  
+  - \`/start\` - Start the bot  
+  - \`/myplans\` - View all your plans  
+  - \`/todays\` - View today's readings  
+  - \`/help\` - Show this help message  
+  
+  contact @sukkoth for any feedback or suggestions!👋
+
+  Happy reading! ✨  
+    `,
+    {
+      parse_mode: 'Markdown',
+    }
+  );
+}
