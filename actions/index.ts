@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { LoginSchema } from "@/lib/schemas/authSchema";
 import { Provider } from "@supabase/supabase-js";
-import { sendNotification } from "@/notifications/NotificationSender";
 import { PushSubscription } from "web-push";
 import {
   ContactArgs,
