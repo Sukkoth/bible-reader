@@ -5,6 +5,7 @@ import * as MessageHandlers from './(handlers)/messages';
 import { handleAnswerCallBack } from './(utils)/utils';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 55;
 export const fetchCache = 'force-no-store';
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
