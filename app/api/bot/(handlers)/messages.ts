@@ -299,7 +299,7 @@ async function handleAccountLinking(ctx: Context): Promise<void> {
   await supabase.from('otp_requests').delete().eq('telegram_id', ctx.from?.id.toString());
 
   const sendOtp = await supabase.from('otp_requests').insert({
-    email: validation.data,
+    email: validation.data.toLowerCase(),
     otp: randomUUID(),
     //expire the OTP after 10 minutes
     expires_at: new Date().getTime() + 1000 * 60 * 10,
