@@ -272,7 +272,11 @@ async function handleAccountLinking(ctx: Context): Promise<void> {
   }
 
   const supabase = createClient();
-  const getUser = await supabase.from('profiles').select('*').eq('email', validation.data).single();
+  const getUser = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('email', validation.data.toLowerCase())
+    .single();
 
   if (getUser.error) {
     console.error('could not get user from profile', getUser.error);
