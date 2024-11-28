@@ -272,31 +272,22 @@ async function handleAccountLinking(ctx: Context): Promise<void> {
   }
 
   const supabase = createClient();
-  const getUser = await supabase.auth.signInWithOtp({
-    email: validation.data,
-    options: {
-      shouldCreateUser: false,
-    },
-  });
+  const getUser = await supabase.from('profiles').select('*').eq('email', validation.data).single();
 
   if (getUser.error) {
-    if (getUser.error?.status === 422) {
-      await ctx.reply('⚠️⚠️⚠️ Email not found, try registering', {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: 'Register 👋',
-                callback_data: 'register_callback',
-              },
-            ],
+    console.error('could not get user from profile', getUser.error);
+    await ctx.reply('⚠️⚠️⚠️ Email not found, try registering', {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Register 👋',
+              callback_data: 'register_callback',
+            },
           ],
-        },
-      });
-    } else {
-      console.log(getUser.error);
-      await ctx.reply('Something Went wrong, try again later.');
-    }
+        ],
+      },
+    });
     return;
   }
 
