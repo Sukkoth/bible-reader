@@ -10,6 +10,7 @@ export async function checkEmailAndRequestReset(email: string) {
   });
 
   if (error) {
+    console.error(`Error resetting password for email of ${email}`, error)
     return {
       error: "Something went wrong",
     };
