@@ -27,7 +27,7 @@
       "purpose": "maskable"
     }
   ],
-  "start_url": "https://www.bible-reader.com",
+  "start_url": "https://bible-reader.com",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
@@ -78,12 +78,12 @@
   "shortcuts": [
     {
       "name": "My Plans",
-      "url": "https://www.bible-reader.com/plans",
+      "url": "https://bible-reader.com/plans",
       "description": "Browse your plans"
     },
     {
       "name": "Create Plan",
-      "url": "https://www.bible-reader.com/plans/create",
+      "url": "https://bible-reader.com/plans/create",
       "description": "Create new reading plan"
     }
   ],
