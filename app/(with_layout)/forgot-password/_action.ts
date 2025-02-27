@@ -2,6 +2,7 @@
 import { createClient } from "@/utils/supabase/server";
 
 export async function checkEmailAndRequestReset(email: string) {
+  console.log("Resetting email for ", email)
   const supabase = createClient();
   const redirectTo = `${process.env.NEXT_APP_URL}/api/auth?to=reset-password`;
 
